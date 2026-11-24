@@ -1,0 +1,8 @@
+node_modules
+dist
+.pgdata
+coverage
+.env
+.env.local
+.vercel
+CLAUDE.md
