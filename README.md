@@ -49,26 +49,6 @@ npm test                # 64 testes (unidade + integração com PostgreSQL real)
 npm run test:coverage
 ```
 
-## Publicando na Vercel (passo a passo)
-
-1. **Suba o código para o GitHub** (repositório do grupo).
-2. Em [vercel.com](https://vercel.com), clique em **Add New → Project** e importe o repositório. A Vercel detecta o `vercel.json` (framework Vite, saída `dist`, função `api/index.ts`). Ainda **não** clique em Deploy, ou aceite que o primeiro deploy falhe sem banco.
-3. **Crie o banco**: no projeto, aba **Storage → Create Database → Neon (Postgres)** → conecte ao projeto. Isso cria a variável `DATABASE_URL` automaticamente.
-4. Em **Settings → Environment Variables**, adicione:
-   - `JWT_SECRET` — valor aleatório longo
-   - `DATA_KEY` — outro valor aleatório longo (**não altere depois**: ele cifra os CPFs)
-   - `ADMIN_EMAIL` e `ADMIN_PASSWORD` — usuário administrador inicial
-
-   Para gerar valores: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
-5. **Deploy** (ou *Redeploy*). No primeiro acesso a API cria as tabelas e carrega os modelos extraídos das planilhas.
-6. (Opcional) Popule a demonstração apontando para a URL publicada:
-   ```bash
-   npx tsx scripts/demo.ts https://SEU-PROJETO.vercel.app admin@empresa.com SUA_SENHA
-   ```
-7. Troque a senha do administrador em **Alterar senha**.
-
-Cada push na `main` gera um novo deploy; cada *pull request* gera uma URL de *preview* para revisão.
-
 ## Estrutura do projeto
 
 ```
