@@ -27,6 +27,7 @@ Sistema web full-stack que transforma as planilhas de RH do Grupo 2 (Cadastro de
 | [`docs/02-plano-de-testes.md`](docs/02-plano-de-testes.md) | ISO/IEC/IEEE 29119-3 | Software Testing, Software Quality |
 | [`docs/03-matriz-rastreabilidade.md`](docs/03-matriz-rastreabilidade.md) | ISO/IEC/IEEE 29148 §5.2.8 | Software Requirements |
 | [`docs/04-ajustes-no-DRS.md`](docs/04-ajustes-no-DRS.md) | IEEE 830 / 29148 | Software Requirements |
+| [`docs/05-equipe-e-responsabilidades.md`](docs/05-equipe-e-responsabilidades.md) | — | Software Engineering Management |
 | `server/schema.sql` | — | Software Design (modelo de dados) |
 
 ## Rodando localmente
@@ -45,7 +46,7 @@ Acesso inicial: admin@empresa.com / Admin@123. Após `npm run demo` também exis
 Testes:
 ```bash
 npm run typecheck
-npm test                # 64 testes (unidade + integração com PostgreSQL real)
+npm test                # 65 testes (unidade + integração com PostgreSQL real)
 npm run test:coverage
 ```
 

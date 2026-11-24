@@ -27,7 +27,7 @@ describe('Datas', () => {
     expect(isISODate('2024-02-29')).toBe(true);
     expect(isISODate('29/02/2024')).toBe(false);
   });
-  it('detecta sobreposição de intervalos fechados', () => {
+  it('CT-U26 RN26 detecta sobreposição de intervalos fechados', () => {
     expect(sobrepoe('2025-01-01', '2025-01-10', '2025-01-10', '2025-01-20')).toBe(true);
     expect(sobrepoe('2025-01-01', '2025-01-09', '2025-01-10', '2025-01-20')).toBe(false);
   });

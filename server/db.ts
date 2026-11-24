@@ -60,28 +60,60 @@ export async function tx<T>(fn: (c: PoolClient) => Promise<T>): Promise<T> {
 }
 
 /**
- * Garante que o esquema exista e que os dados iniciais (modelos extraídos das
- * planilhas, parâmetros e usuário administrador) estejam carregados.
+ * Trecho entre parênteses com códigos de requisito, como " (RN32)" ou " (RF19/RF20, RN18)".
+ * Expressão regular POSIX do PostgreSQL (usada por regexp_replace).
+ */
+export const REGEX_CODIGOS_REQUISITO =
+  '[[:space:]]*[(]R(NF|N|F|I)[0-9]{2}([[:space:]]*[–/,-][[:space:]]*R(NF|N|F|I)[0-9]{2})*[)]';
+
+/**
+ * Migrações de dados para bancos já existentes, indexadas pela versão de destino.
+ * Cada migração roda uma única vez, quando a versão gravada em schema_meta é menor.
+ */
+const MIGRACOES: Record<number, (c: Db) => Promise<void>> = {
+  // v2: mensagens exibidas ao usuário não mostram códigos de requisito (RNF18 - manutenibilidade).
+  // Remove os códigos dos textos copiados do seed antigo para modelos, checklists e parâmetros.
+  2: async (c) => {
+    for (const [tabela, coluna] of [
+      ['modelo_checklist_itens', 'orientacao'],
+      ['checklist_itens', 'orientacao'],
+      ['parametros', 'descricao'],
+    ]) {
+      await c.query(
+        `UPDATE ${tabela} SET ${coluna} = regexp_replace(${coluna}, $1, '', 'g') WHERE ${coluna} ~ $1`,
+        [REGEX_CODIGOS_REQUISITO],
+      );
+    }
+  },
+};
+
+async function versaoGravada(c: Db): Promise<number> {
+  const t = await c.query(`SELECT to_regclass('public.schema_meta') AS t`);
+  if (!t.rows[0].t) return 0;
+  const v = await c.query('SELECT max(versao) AS v FROM schema_meta');
+  return v.rows[0].v ?? 0;
+}
+
+/**
+ * Garante que o esquema exista, que os dados iniciais (modelos extraídos das
+ * planilhas, parâmetros e usuário administrador) estejam carregados e que as
+ * migrações pendentes tenham sido aplicadas.
  * Executado uma vez por instância (cold start); idempotente.
  */
 export function ensureReady(): Promise<void> {
   if (!global.__cvReady) {
     global.__cvReady = (async () => {
-      const pool = getPool();
-      const exists = await pool.query(`SELECT to_regclass('public.schema_meta') AS t`);
-      if (exists.rows[0].t) {
-        const v = await pool.query('SELECT max(versao) AS v FROM schema_meta');
-        if (v.rows[0].v >= SCHEMA_VERSION) return;
-      }
+      if ((await versaoGravada(getPool())) >= SCHEMA_VERSION) return;
       await tx(async (c) => {
         await c.query('SELECT pg_advisory_xact_lock(424242)');
-        const again = await c.query(`SELECT to_regclass('public.schema_meta') AS t`);
-        if (again.rows[0].t) {
-          const v = await c.query('SELECT max(versao) AS v FROM schema_meta');
-          if (v.rows[0].v >= SCHEMA_VERSION) return;
-        }
+        const atual = await versaoGravada(c);
+        if (atual >= SCHEMA_VERSION) return;
         await c.query(SCHEMA_SQL);
         await seed(c);
+        // Banco novo (atual = 0) já nasce com o seed atualizado; migrações valem para bancos existentes.
+        if (atual > 0) {
+          for (let v = atual + 1; v <= SCHEMA_VERSION; v++) await MIGRACOES[v]?.(c);
+        }
         await c.query('INSERT INTO schema_meta (versao) VALUES ($1)', [SCHEMA_VERSION]);
       });
     })().catch((e) => {

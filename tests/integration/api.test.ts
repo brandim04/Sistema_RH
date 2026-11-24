@@ -331,4 +331,27 @@ describe('Funcionalidades gerais (RF48-RF51, RNF05, RNF06)', () => {
     const exe = await admin.post('/api/documentos').send({ colaborador_id: c.id, nome_arquivo: 'x.exe', mime: 'application/x-msdownload', conteudo_base64: pdf });
     expect(exe.status).toBe(400);
   });
+  it('CT-I39 RNF18 migração v2 remove códigos de requisito dos textos de bancos existentes', async () => {
+    const db = await import('../../server/db');
+    const { SCHEMA_VERSION } = await import('../../server/schema');
+    const modelo = (await db.query('SELECT id FROM modelo_checklist_itens ORDER BY id LIMIT 1'))[0];
+    const item = (await db.query('SELECT id FROM checklist_itens ORDER BY id LIMIT 1'))[0];
+    // Textos como o seed antigo gravava (com códigos), inclusive parênteses que não são código
+    await db.query("UPDATE modelo_checklist_itens SET orientacao = 'Consulte a convenção (estabilidades) e confirme o motivo (RN32).' WHERE id = $1", [modelo.id]);
+    await db.query("UPDATE checklist_itens SET orientacao = 'Registre o inventário e colete o termo de entrega (RF19/RF20, RN18).' WHERE id = $1", [item.id]);
+    await db.query("UPDATE parametros SET descricao = 'Dias antes do vencimento para gerar alerta (RF29).' WHERE chave = 'alerta_dias'");
+    // Simula um banco criado na versão 1 e reinicia a verificação de prontidão
+    await db.query('DELETE FROM schema_meta');
+    await db.query('INSERT INTO schema_meta (versao) VALUES (1)');
+    (globalThis as any).__cvReady = undefined;
+    await db.ensureReady();
+    expect((await db.one('SELECT orientacao FROM modelo_checklist_itens WHERE id = $1', [modelo.id]))!.orientacao)
+      .toBe('Consulte a convenção (estabilidades) e confirme o motivo.');
+    expect((await db.one('SELECT orientacao FROM checklist_itens WHERE id = $1', [item.id]))!.orientacao)
+      .toBe('Registre o inventário e colete o termo de entrega.');
+    expect((await db.one("SELECT descricao FROM parametros WHERE chave = 'alerta_dias'"))!.descricao)
+      .toBe('Dias antes do vencimento para gerar alerta.');
+    expect((await db.one('SELECT max(versao) AS v FROM schema_meta'))!.v).toBe(SCHEMA_VERSION);
+    await admin.get('/api/painel').expect(200);
+  });
 });

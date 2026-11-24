@@ -74,7 +74,7 @@ Cada decisão segue o formato contexto → decisão → consequências, conforme
 
 ### ADR-06 — Proteção de dados pessoais (RNF01, RNF02)
 - Decisão: CPF armazenado cifrado (AES-256-GCM) e acompanhado de um HMAC-SHA256 para garantir unicidade sem guardar o CPF em claro. Conexão com o banco por TLS; HTTPS fornecido pela Vercel. Dados sensíveis (CPF completo, RG, salário, CTPS, PIS, documentos) só são entregues pela API a perfis com a permissão `colaborador:sensivel`.
-- Consequências: a chave `DATA_KEY` não pode ser trocada depois do primeiro cadastro (documentado no guia de implantação).
+- Consequências: a chave DATA_KEY não pode ser alterada após o primeiro cadastro, conforme indicado no .env.example.
 
 ### ADR-07 — Sessão por JWT em cookie HttpOnly
 - Decisão: login gera JWT (8 h) gravado em cookie `HttpOnly`, `SameSite=Lax`, `Secure` em produção. Senhas com bcrypt. Limite de 5 tentativas de login em 5 minutos por e-mail.
@@ -87,7 +87,8 @@ Cada decisão segue o formato contexto → decisão → consequências, conforme
 
 ### ADR-09 — Inicialização automática do banco
 - Decisão: no primeiro acesso, a API cria o esquema e carrega os dados extraídos das planilhas (checklists, modalidades, prazos, parâmetros) e o usuário administrador (`server/seed.ts`), protegido por advisory lock e versão de esquema (`schema_meta`).
-- Consequências: implantar na Vercel não exige rodar scripts manualmente.
+- Migrações: quando a versão gravada em `schema_meta` é menor que `SCHEMA_VERSION` (`server/schema.ts`), o `ensureReady()` (`server/db.ts`) reaplica o esquema (só comandos `IF NOT EXISTS`) e executa, em ordem, as migrações de dados pendentes antes de gravar a nova versão. Versão 2: remove dos textos já gravados (`modelo_checklist_itens.orientacao`, `checklist_itens.orientacao` e `parametros.descricao`) os trechos entre parênteses com códigos de requisito, usando `regexp_replace` (CT-I39).
+- Consequências: implantar na Vercel não exige rodar scripts manualmente, inclusive para atualizar bancos já existentes.
 
 ---
 
@@ -124,6 +125,7 @@ flowchart TB
     R1[routes/colaboradores.ts] --- R2[routes/processos.ts]
     R2 --- R3[routes/ferias.ts] --- R4[routes/admin.ts]
     S[servicos.ts — geração de checklists, prazos, pendências, painel]
+    Z[routes/comum.ts — validadores Zod compartilhados]
   end
   subgraph Domínio [Domínio — regras puras - server/domain/]
     D1[datas.ts] --- D2[prazos.ts] --- D3[checklist.ts] --- D4[ferias.ts] --- D5[cpf.ts]
@@ -132,6 +134,7 @@ flowchart TB
     T[(schema.sql)]
   end
   Apresentação -->|fetch /api JSON| MW --> R1 & R2 & R3 & R4
+  R1 & R2 & R3 & R4 --> Z
   R1 & R2 & R3 & R4 --> S --> Domínio
   R1 & R2 & R3 & R4 --> D3 & D4 & D5
   S --> T
@@ -146,6 +149,8 @@ flowchart TB
 | Férias | `routes/ferias.ts` | `Ferias`, `FeriasColaborador`, `MapaFerias` | `ferias.ts` |
 | Desligamento | `routes/processos.ts` (desligamentos, modalidades) | `Desligamentos`, `DesligamentoDetalhe`, `FgtsDigital` | `checklist.ts` |
 | Funcionalidades gerais | `routes/admin.ts`, `infra.ts` | `Painel`, `Configuracoes`, `Usuarios`, `Auditoria`, `Login` | — |
+
+Os quatro roteadores usam `routes/comum.ts`, que reúne os validadores Zod compartilhados (data `AAAA-MM-DD`, data opcional, texto opcional com limite de tamanho, identificador opcional). Assim, a mesma regra de entrada vale em todos os módulos (RNF11).
 
 ### 4.3 Visão de informação (modelo de dados)
 
@@ -289,33 +294,49 @@ A matriz está implementada em `server/infra.ts` (`PERMISSOES`) e é verificada 
 
 Todas as rotas exigem sessão, exceto `/api/auth/login` e `/api/saude`. Erros retornam `{ erro, detalhes?, campos?, regra? }` com códigos: 400 (validação), 401 (sem sessão), 403 (perfil), 404, 409 (duplicidade), 422 (regra de negócio).
 
-| Método e rota | Requisitos |
-|---|---|
-| `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`, `POST /api/auth/senha` | RF52 |
-| `GET /api/colaboradores?busca=&status=&area_id=` | RF07, RF30 |
-| `GET /api/colaboradores/quadro` | RF10 |
-| `GET /api/colaboradores/:id` | RF08, RF09 |
-| `POST /api/colaboradores`, `PUT /api/colaboradores/:id` | RF01–RF06 |
-| `POST /api/colaboradores/:id/status` | RF30 |
-| `POST /api/colaboradores/importar` | RNF13 |
-| `GET /api/colaboradores/:id/historico` | RF49 |
-| `GET/POST /api/admissoes`, `GET/PUT /api/admissoes/:id` | RF11, RF12, RF21 |
-| `POST /api/admissoes/:id/concluir`, `/cancelar` | RNF12 |
-| `GET /api/admissoes/:id/lgpd` | RF17 |
-| `PATCH /api/itens/:id`, `POST /api/{admissoes,desligamentos}/:id/itens`, `DELETE /api/itens/:id` | RF13, RF14, RF43 |
-| `GET /api/tarefas`, `PATCH/DELETE /api/tarefas/:id`, `POST /api/admissoes/:id/tarefas` | RF22–RF27 |
-| `POST/PATCH/DELETE /api/equipamentos` | RF19, RF20, RF44 |
-| `POST /api/documentos`, `GET /api/documentos/:id/download`, `DELETE` | RF18 |
-| `GET /api/modalidades` | RF42 |
-| `GET/POST /api/desligamentos`, `GET/PUT /api/desligamentos/:id`, `/concluir`, `/cancelar` | RF40–RF47 |
-| `GET /api/ferias/colaboradores`, `GET /api/ferias/colaboradores/:id` | RF32, RF33, RF36 |
-| `POST /api/ferias/validar`, `POST /api/ferias`, `PUT /api/ferias/:id`, `POST /api/ferias/:id/cancelar` | RF34, RF35, RF39 |
-| `GET /api/ferias`, `GET /api/ferias/mapa` | RF36–RF38 |
-| `PUT /api/ferias/periodos/:id` (faltas) | RN27 |
-| `GET /api/painel` | RF29, RF48 |
-| `GET/PUT /api/config/...` (parâmetros, modelos de checklist, modalidades, modelos de prazo, etapas, duplicar) | RF16, RF28, RNF06 |
-| `GET/POST/PUT /api/usuarios`, `GET /api/auditoria`, `GET /api/admin/backup` | RF50, RF53, RNF17 |
-| `GET /api/fgts-digital` | RF45 |
+Catálogo completo, conferido com os roteadores em `server/routes/` (montados em `server/app.ts`).
+
+| Método e rota | Arquivo | Requisitos |
+|---|---|---|
+| `GET /api/saude` | `app.ts` | RNF10 |
+| `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`, `POST /api/auth/senha` | `admin.ts` | RF52 |
+| `GET /api/colaboradores?busca=&status=&area_id=` | `colaboradores.ts` | RF07, RF30 |
+| `GET /api/colaboradores/quadro` | `colaboradores.ts` | RF10 |
+| `GET /api/colaboradores/:id` | `colaboradores.ts` | RF08, RF09 |
+| `POST /api/colaboradores`, `PUT /api/colaboradores/:id` | `colaboradores.ts` | RF01–RF06 |
+| `POST /api/colaboradores/:id/status` | `colaboradores.ts` | RF30 |
+| `POST /api/colaboradores/importar` | `colaboradores.ts` | RNF13 |
+| `GET /api/colaboradores/:id/historico` | `colaboradores.ts` | RF49 |
+| `GET /api/colaboradores/:id/documentos` | `processos.ts` | RF18 |
+| `GET /api/colaboradores/:id/equipamentos` | `processos.ts` | RF19, RF44 |
+| `GET /api/admissoes`, `POST /api/admissoes`, `GET /api/admissoes/:id`, `PUT /api/admissoes/:id` | `processos.ts` | RF11, RF12, RF21, RN21 |
+| `POST /api/admissoes/:id/concluir`, `POST /api/admissoes/:id/cancelar` | `processos.ts` | RNF12 |
+| `GET /api/admissoes/:id/lgpd` | `processos.ts` | RF17 |
+| `PATCH /api/itens/:id`, `DELETE /api/itens/:id` | `processos.ts` | RF13, RF14, RF43 |
+| `POST /api/admissoes/:id/itens`, `POST /api/desligamentos/:id/itens` | `processos.ts` | RF16 (itens avulsos) |
+| `GET /api/tarefas`, `PATCH /api/tarefas/:id`, `DELETE /api/tarefas/:id`, `POST /api/admissoes/:id/tarefas` | `processos.ts` | RF22–RF27 |
+| `POST /api/equipamentos`, `PATCH /api/equipamentos/:id`, `DELETE /api/equipamentos/:id` | `processos.ts` | RF19, RF20, RF44 |
+| `POST /api/documentos`, `GET /api/documentos/:id/download`, `DELETE /api/documentos/:id` | `processos.ts` | RF18 |
+| `GET /api/modalidades` | `processos.ts` | RF42 |
+| `GET /api/desligamentos`, `POST /api/desligamentos`, `GET /api/desligamentos/:id`, `PUT /api/desligamentos/:id` | `processos.ts` | RF40–RF45 |
+| `POST /api/desligamentos/:id/concluir`, `POST /api/desligamentos/:id/cancelar` | `processos.ts` | RF47, RN37, RN38 |
+| `GET /api/ferias/colaboradores`, `GET /api/ferias/colaboradores/:id` | `ferias.ts` | RF32, RF33, RF36 |
+| `POST /api/ferias/periodos/:colaborador_id/sincronizar` | `ferias.ts` | RF32, RN22 |
+| `PUT /api/ferias/periodos/:id` (faltas) | `ferias.ts` | RN27 |
+| `POST /api/ferias/validar`, `POST /api/ferias`, `PUT /api/ferias/:id`, `POST /api/ferias/:id/cancelar` | `ferias.ts` | RF34, RF35, RF39 |
+| `GET /api/ferias`, `GET /api/ferias/mapa` | `ferias.ts` | RF36–RF38 |
+| `GET /api/painel` | `admin.ts` | RF29, RF48 |
+| `GET /api/areas`, `POST /api/areas`, `PUT /api/areas/:id` | `admin.ts` | RF31 |
+| `GET /api/usuarios`, `POST /api/usuarios`, `PUT /api/usuarios/:id` | `admin.ts` | RF53, RNF04 |
+| `GET /api/auditoria` | `admin.ts` | RF49, RF50, RNF05 |
+| `GET /api/config/parametros`, `PUT /api/config/parametros/:chave` | `admin.ts` | RF29, RNF06 |
+| `GET /api/config/modelo-itens`, `POST /api/config/modelo-itens`, `PUT /api/config/modelo-itens/:id`, `DELETE /api/config/modelo-itens/:id` | `admin.ts` | RF16, RNF06 |
+| `POST /api/config/modalidades`, `PUT /api/config/modalidades/:id` | `admin.ts` | RF42, RNF06 |
+| `GET /api/config/modelos-prazo`, `POST /api/config/modelos-prazo`, `PUT /api/config/modelos-prazo/:id`, `DELETE /api/config/modelos-prazo/:id` | `admin.ts` | RF28, RNF06 |
+| `POST /api/config/modelos-prazo/:id/duplicar` | `admin.ts` | RF28 |
+| `POST /api/config/modelos-prazo/:id/etapas`, `PUT /api/config/etapas/:id`, `DELETE /api/config/etapas/:id` | `admin.ts` | RF23, RF28, RNF06 |
+| `GET /api/fgts-digital` | `admin.ts` | RF45 |
+| `GET /api/admin/backup` | `admin.ts` | RNF17 |
 
 ### 5.2 Algoritmos principais
 
@@ -345,7 +366,7 @@ Operações que alteram processos rodam em transação com `SELECT … FOR UPDAT
 | Segurança — confidencialidade | RNF01, RNF02 | CPF cifrado, TLS, dados sensíveis por perfil | CT-I03, CT-I08 |
 | Segurança — autenticidade | RNF03 | Login, bcrypt, JWT HttpOnly | CT-I01, CT-I02 |
 | Segurança — responsabilização | RNF05 | Tabela `auditoria` em toda alteração | CT-I35 |
-| Manutenibilidade — modificabilidade | RNF06, RNF18 | Modelos e parâmetros em tabelas; domínio isolado | CT-I36 |
+| Manutenibilidade — modificabilidade | RNF06, RNF18 | Modelos e parâmetros em tabelas; domínio isolado; migrações versionadas do banco | CT-I36, CT-I39 |
 | Usabilidade — operabilidade | RNF07, RNF16 | Marcação de item em 1 clique; componente de checklist único | CA-08 |
 | Portabilidade — adaptabilidade | RNF08, RNF14 | CSS responsivo; navegadores modernos | CA-10 |
 | Eficiência de desempenho | RNF09 | Checklist (~40 itens) em uma requisição | CT-I20 |
@@ -361,4 +382,6 @@ Operações que alteram processos rodam em transação com `SELECT … FOR UPDAT
 - SQL: sempre parametrizado; nenhuma concatenação de valores do usuário.
 - Nomes: em português, iguais aos termos do DRS (glossário compartilhado).
 - Rastreabilidade no código: comentários citam o identificador do requisito/regra (ex.: `// RN37`), permitindo localizar a implementação com uma busca. As mensagens exibidas ao usuário não mostram esses códigos.
-- Gerência de configuração (SWEBOK cap. 8 / IEEE 828): repositório Git, branch `main` protegida, uma branch por funcionalidade, pull request revisado por outro integrante, deploy automático da Vercel a cada push na `main` e preview por PR.
+- Gerência de configuração (SWEBOK cap. 8 / IEEE 828):
+  - Prática atual: repositório Git no GitHub. Nesta fase do trabalho, as alterações são enviadas diretamente para a branch `main`, sempre depois de `npm run typecheck` e `npm test` passarem. Cada push na `main` gera um novo deploy automático na Vercel. Os commits citam o requisito afetado e os defeitos encontrados ficam registrados no plano de testes (seção 4.1).
+  - Prática recomendada para a evolução do projeto: uma branch por funcionalidade (`feat/...`, `fix/...`, `docs/...`), pull request revisado por outro integrante antes do merge, proteção da branch `main` e uso das URLs de preview que a Vercel gera para cada pull request.

@@ -50,7 +50,7 @@ Componentes: API = `server/routes/…`; DOM = `server/domain/…`; BD = `server/
 | RF32 | FER — Início/Fim do período aquisitivo (`EDATE`) | DOM `ferias.gerarPeriodosAquisitivos`; BD `periodos_aquisitivos` | CT-U11, CT-I22 |
 | RF33 | FER — "Limite para início" (+335) e "Situação" | DOM `ferias.dataLimiteInicio`, `situacaoPeriodo` | CT-U12, CT-U14, CT-I22 |
 | RF34 | FER — Início/Fim das férias | API `POST/PUT /ferias`, `/ferias/validar`, `/cancelar`; UI FeriasColaborador | CT-U15, CT-I23, CT-I26 |
-| RF35 | NOVO | DOM `ferias.validarFerias` (sobreposição) | CT-U17, CT-I24 |
+| RF35 | NOVO | DOM `ferias.validarFerias` (sobreposição), `datas.sobrepoe` | CT-U17, CT-U26, CT-I24 |
 | RF36 | FER — filtros | API `GET /ferias`, `/ferias/colaboradores`; UI Ferias | CT-I27 |
 | RF37 | FER 3 — Mapa de férias | DOM `ferias.diasPorMes`; API `/ferias/mapa`; UI MapaFerias | CT-U23, CT-I23 |
 | RF38 | FER 3 — filtro | API `/ferias/mapa?area_id=&busca=&ano=` | CT-I27 |
@@ -91,7 +91,7 @@ Componentes: API = `server/routes/…`; DOM = `server/domain/…`; BD = `server/
 | RNF15 | Transações + recarga após alteração | CT-I15 |
 | RNF16 | `estilo.css` único; componente `Checklist.vue` compartilhado | CA-04, CA-08 |
 | RNF17 | Neon PITR + `GET /api/admin/backup` | CT-I37 |
-| RNF18 | Camadas e módulos (SDD §4.2) | Revisão |
+| RNF18 | Camadas e módulos (SDD §4.2); migrações versionadas do banco (`db.ensureReady`, `schema_meta`, ADR-09) | Revisão, CT-I39 |
 
 ## 3. Regras de negócio
 
@@ -117,7 +117,7 @@ Componentes: API = `server/routes/…`; DOM = `server/domain/…`; BD = `server/
 | RN23 | `ferias.periodo_aquisitivo_id` (FK) | CT-I23 |
 | RN24 | `validarFerias` | CT-U18, CT-I25 |
 | RN25 | `ck_ferias_datas` + `validarFerias` | CT-U16 |
-| RN26 | `validarFerias` (sobreposição) | CT-U17, CT-I24 |
+| RN26 | `validarFerias` (sobreposição), `sobrepoe` (intervalos fechados) | CT-U17, CT-U26, CT-I24 |
 | RN27 | `diasDeDireito`, fracionamento, DSR | CT-U13, CT-U19, CT-U20 |
 | RN28 | Mapa calculado a partir das férias vigentes | CT-I23 |
 | RN29 | `validarFerias` (status ATIVO) | CT-U21, CT-I33 |

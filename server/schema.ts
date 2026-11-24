@@ -1,6 +1,6 @@
 // Gerado a partir de schema.sql (mantido como string para empacotamento na Vercel).
 // Para alterar o esquema, edite schema.sql e rode: npm run db:schema
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 export const SCHEMA_SQL = `
 -- =====================================================================
 -- Sistema de Ciclo de Vida do Colaborador - Grupo 2

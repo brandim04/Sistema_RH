@@ -45,16 +45,18 @@ Verificar que o sistema atende aos requisitos do DRS (RF, RNF, RN) e validar, co
 ### 1.7 Responsabilidades
 | Papel | Responsável |
 |---|---|
-| Planejamento e revisão dos casos | (preencher) |
-| Automação (unidade/integração) | (preencher) |
-| Execução da aceitação com o roteiro | (preencher) |
-| Registro de defeitos (Issues do GitHub) | (preencher) |
+| Planejamento e revisão dos casos | Thayanne Oliveira, José Henrique e Larissa Brandim |
+| Automação (unidade e integração) | Larissa Brandim e Vithor Gabriel |
+| Execução da aceitação com o roteiro | José Henrique |
+| Registro de defeitos | Sammya Letícia |
 
 ---
 
 ## 2. Especificação dos casos de teste automatizados
 
 ### 2.1 Unidade — `tests/unit/dominio.test.ts`
+
+26 casos (CT-U01 a CT-U26), cada um correspondente a um teste automatizado.
 
 | ID | Requisito | Caso | Técnica | Resultado esperado |
 |---|---|---|---|---|
@@ -83,8 +85,11 @@ Verificar que o sistema atende aos requisitos do DRS (RF, RNF, RN) e validar, co
 | CT-U23 | RF37 | Distribuição de dias por mês no mapa | Oráculo | 11 + 19 = 30 |
 | CT-U24 | RNF11 | CPF: dígitos, repetidos, formatação, máscara | Partição | Correto |
 | CT-U25 | RNF04 | Matriz de permissões por perfil | Tabela de decisão | Conforme SDD 4.6 |
+| CT-U26 | RN26 | Sobreposição de intervalos fechados (fim de um = início do outro; dias consecutivos) | Valor-limite | Sobrepõe; não sobrepõe |
 
 ### 2.2 Integração — `tests/integration/api.test.ts`
+
+39 casos (CT-I01 a CT-I39), cada um correspondente a um teste automatizado.
 
 | ID | Requisito(s) | Cenário | Resultado esperado |
 |---|---|---|---|
@@ -126,6 +131,7 @@ Verificar que o sistema atende aos requisitos do DRS (RF, RNF, RN) e validar, co
 | CT-I36 | RNF06, RF16 | Alterar parâmetro (válido/inválido) e item de modelo | 200 / 400; item criado e removido |
 | CT-I37 | RNF17 | Backup | Sem senhas nem conteúdo de anexos |
 | CT-I38 | RF18, RI08 | Anexar PDF, baixar, enviar tipo proibido | 201, `application/pdf`, 400 |
+| CT-I39 | RNF18 | Banco na versão 1 com textos "(RN32)" e "(RF19/RF20, RN18)" em orientações e descrição de parâmetro; executar `ensureReady()` | Códigos removidos, parênteses comuns mantidos, `schema_meta` na versão 2 |
 
 ---
 
@@ -154,7 +160,7 @@ Executar no ambiente da Vercel após `npm run demo`. Registrar o resultado (Apro
 
 | Data | Ambiente | Unidade | Integração | Total | Situação |
 |---|---|---|---|---|---|
-| 24/11/2026 | Windows 11, Node 24, PostgreSQL 18 (embutido) | 26/26 | 38/38 | 64/64 | Aprovado |
+| 24/11/2026 | Windows 11, Node 24, PostgreSQL 18 (embutido) | 26/26 | 39/39 | 65/65 | Aprovado |
 
 Cobertura (`npm run test:coverage`):
 
