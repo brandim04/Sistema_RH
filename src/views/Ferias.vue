@@ -30,7 +30,7 @@ function exportar() {
 <template>
   <div>
     <div class="topo">
-      <div><h1>Controle de férias</h1><p>Período aquisitivo de referência, data limite e situação de cada pessoa (RF32, RF33, RF36).</p></div>
+      <div><h1>Controle de férias</h1><p>Período aquisitivo de referência, data limite e situação de cada pessoa.</p></div>
       <div class="acoes"><button @click="exportar">Exportar Excel</button><button @click="router.push('/ferias/mapa')">Mapa de férias</button></div>
     </div>
     <div class="cartao">

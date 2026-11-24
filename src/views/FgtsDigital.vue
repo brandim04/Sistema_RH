@@ -9,7 +9,7 @@ onMounted(async () => { [g.value, mods.value] = await Promise.all([get('/fgts-di
 
 <template>
   <div v-if="g">
-    <div class="topo"><div><h1>Guia FGTS Digital e documentos da rescisão</h1><p>Consulta de orientações (RF45). {{ g.fonte }}</p></div></div>
+    <div class="topo"><div><h1>Guia FGTS Digital e documentos da rescisão</h1><p>Consulta de orientações. {{ g.fonte }}</p></div></div>
     <div class="aviso ambar">{{ g.aviso }}</div>
     <div class="grade g2">
       <section v-for="x in g.guias" :key="x.titulo" class="cartao">

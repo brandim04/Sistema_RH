@@ -59,7 +59,7 @@ async function criar() {
     <div v-if="nova" class="modal-fundo" @click.self="nova = null">
       <form class="modal" @submit.prevent="criar">
         <h2>Nova admissão</h2>
-        <p class="mudo pequeno">A admissão deve estar ligada a uma pessoa já cadastrada (RN08). Se ainda não cadastrou, <router-link to="/colaboradores/novo">cadastre primeiro</router-link> com a situação "Em admissão".</p>
+        <p class="mudo pequeno">A admissão deve estar ligada a uma pessoa já cadastrada. Se ainda não cadastrou, <router-link to="/colaboradores/novo">cadastre primeiro</router-link> com a situação "Em admissão".</p>
         <div class="campo"><label>Pessoa colaboradora *</label>
           <select v-model="nova.colaborador_id" required @change="escolher"><option value="" disabled>Selecione…</option><option v-for="c in candidatos" :key="c.id" :value="c.id">{{ c.nome }} — {{ rotulo('status', c.status) }}</option></select>
         </div>

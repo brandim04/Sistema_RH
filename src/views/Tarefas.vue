@@ -27,7 +27,7 @@ function exportar() {
 <template>
   <div>
     <div class="topo">
-      <div><h1>Prazos e tarefas</h1><p>Etapas de todas as admissões em andamento, com data limite e responsável (RF22–RF29).</p></div>
+      <div><h1>Prazos e tarefas</h1><p>Etapas de todas as admissões em andamento, com data limite e responsável.</p></div>
       <div class="acoes"><button @click="exportar">Exportar Excel</button></div>
     </div>
     <div class="cartao">

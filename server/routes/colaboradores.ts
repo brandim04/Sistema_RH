@@ -212,7 +212,7 @@ r.post('/importar', exigir('colaborador:escrever'), async (req, res) => {
       resultado.importados++;
     } catch (e: any) {
       const msg = e?.issues ? e.issues.map((x: any) => `${x.path.join('.')}: ${x.message}`).join('; ')
-        : e?.code === '23505' ? 'CPF já cadastrado (RN02).' : e.message;
+        : e?.code === '23505' ? 'CPF já cadastrado.' : e.message;
       resultado.erros.push({ linha: l.__linha ?? i + 1, nome: l.nome, erro: msg });
     }
   }

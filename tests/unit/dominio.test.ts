@@ -70,7 +70,7 @@ describe('Checklist (RF13, RF21, RN09, RN10, RN37)', () => {
   it('CT-U09 RN10 somente item condicional aceita "não se aplica"', () => {
     expect(() => validarStatusItem({ condicional: false, descricao: 'CPF' }, 'NA')).toThrow(RegraNegocioError);
     expect(() => validarStatusItem({ condicional: true, descricao: 'CNH' }, 'NA')).not.toThrow();
-    expect(() => validarStatusItem({ condicional: true, descricao: 'X' }, 'OUTRO' as any)).toThrow(/RN09|inválido/);
+    expect(() => validarStatusItem({ condicional: true, descricao: 'X' }, 'OUTRO' as any)).toThrow(/Status inválido/);
   });
   it('CT-U10 vigência da regra do PIS/PASEP (admissões até 02/2024)', () => {
     const pis = { vigencia_inicio: null, vigencia_fim: '2024-02-29' };
@@ -121,18 +121,18 @@ describe('Férias (RF32, RF33, RN22-RN27)', () => {
     expect(v.dias).toBe(30);
   });
   it('CT-U16 RN25 início posterior ao término', () => {
-    expect(validarFerias({ ...base, novo: { inicio: '2025-07-10', fim: '2025-07-01' } }).erros[0]).toMatch(/RN25/);
+    expect(validarFerias({ ...base, novo: { inicio: '2025-07-10', fim: '2025-07-01' } }).erros[0]).toMatch(/início não pode ser posterior/i);
   });
   it('CT-U17 RN26 impede conflito entre períodos da mesma pessoa', () => {
     const existentes = [{ id: 9, periodo_aquisitivo_id: 1, inicio: '2025-07-07', fim: '2025-07-21', dias: 15, status: 'PROGRAMADA' as const }];
     const v = validarFerias({ ...base, existentes, novo: { inicio: '2025-07-14', fim: '2025-07-28' } });
-    expect(v.erros.join()).toMatch(/RN26/);
+    expect(v.erros.join()).toMatch(/conflito com férias já registradas/i);
     // a mesma férias, ao ser alterada, não conflita consigo mesma
     const v2 = validarFerias({ ...base, existentes, ignorarId: 9, novo: { inicio: '2025-07-14', fim: '2025-07-28' } });
-    expect(v2.erros.join()).not.toMatch(/RN26/);
+    expect(v2.erros.join()).not.toMatch(/conflito com férias já registradas/i);
   });
   it('CT-U18 RN24 pessoa ainda não apta (período aquisitivo em curso)', () => {
-    expect(validarFerias({ ...base, hoje: '2024-11-01', novo: { inicio: '2025-01-06', fim: '2025-01-20' } }).erros.join()).toMatch(/RN24/);
+    expect(validarFerias({ ...base, hoje: '2024-11-01', novo: { inicio: '2025-01-06', fim: '2025-01-20' } }).erros.join()).toMatch(/só se completa em/i);
   });
   it('CT-U19 RN27 limites de fracionamento e quantidade de dias', () => {
     expect(validarFerias({ ...base, novo: { inicio: '2025-07-07', fim: '2025-07-09' } }).erros.join()).toMatch(/menos de 5 dias/);
@@ -153,7 +153,7 @@ describe('Férias (RF32, RF33, RN22-RN27)', () => {
     expect(validarFerias({ ...base, bloquearInicioAntesDsr: false, novo: sexta }).erros).toEqual([]);
   });
   it('CT-U21 RN29 pessoa inativa não recebe novas férias', () => {
-    expect(validarFerias({ ...base, colaboradorStatus: 'INATIVO', novo: { inicio: '2025-07-07', fim: '2025-08-05' } }).erros.join()).toMatch(/RN29/);
+    expect(validarFerias({ ...base, colaboradorStatus: 'INATIVO', novo: { inicio: '2025-07-07', fim: '2025-08-05' } }).erros.join()).toMatch(/somente pessoas colaboradoras ativas/i);
   });
   it('CT-U22 aviso quando o início passa da data limite (férias em dobro)', () => {
     const v = validarFerias({ ...base, hoje: '2025-12-20', novo: { inicio: '2026-01-05', fim: '2026-02-03' } });

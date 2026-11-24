@@ -28,7 +28,7 @@ function exportar() {
 <template>
   <div>
     <div class="topo">
-      <div><h1>Mapa de férias</h1><p>Dias de férias programadas por mês. Atualizado automaticamente a cada registro, alteração ou cancelamento (RF37, RN28).</p></div>
+      <div><h1>Mapa de férias</h1><p>Dias de férias programadas por mês. Atualizado automaticamente a cada registro, alteração ou cancelamento.</p></div>
       <div class="acoes"><button @click="exportar" :disabled="!m">Exportar Excel</button></div>
     </div>
     <div class="cartao">

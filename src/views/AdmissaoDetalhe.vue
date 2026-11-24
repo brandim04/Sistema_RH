@@ -19,7 +19,7 @@ const edicao = ref<any>(null);
 function editar() { edicao.value = { data_referencia: a.value.data_referencia, cargo: a.value.cargo, observacoes: a.value.observacoes ?? '' }; }
 async function salvarDados() {
   const mudouData = edicao.value.data_referencia !== a.value.data_referencia;
-  if (await tentar(() => put(`/admissoes/${a.value.id}`, edicao.value), mudouData ? 'Dados salvos. Prazos recalculados (RN21).' : 'Dados salvos.')) { edicao.value = null; carregar(); }
+  if (await tentar(() => put(`/admissoes/${a.value.id}`, edicao.value), mudouData ? 'Dados salvos. Prazos recalculados.' : 'Dados salvos.')) { edicao.value = null; carregar(); }
 }
 
 // Tarefas
@@ -159,7 +159,7 @@ const imprimir = () => window.print();
         <thead><tr><th>Equipamento</th><th>Patrimônio / série</th><th>Entrega</th><th>Situação</th><th></th></tr></thead>
         <tbody><tr v-for="e in a.equipamentos" :key="e.id"><td>{{ e.descricao }}</td><td>{{ e.patrimonio ?? '—' }}</td><td>{{ data(e.data_entrega) }}</td><td><span class="etiqueta" :class="cor('equipamento', e.status)">{{ rotulo('equipamento', e.status) }}</span></td><td><button v-if="aberta && pode('equipamento:escrever')" class="link mini perigo" @click="removerEq(e)">remover</button></td></tr></tbody>
       </table>
-      <div v-if="!a.equipamentos.length" class="vazio">Nenhum equipamento. O inventário será usado para conferir a devolução no desligamento (RN18/RN39).</div>
+      <div v-if="!a.equipamentos.length" class="vazio">Nenhum equipamento. O inventário será usado para conferir a devolução no desligamento.</div>
     </section>
 
     <section v-if="aba === 'dados'" class="cartao">
@@ -176,7 +176,7 @@ const imprimir = () => window.print();
           <div class="campo"><label>Cargo</label><input v-model="edicao.cargo" required /></div>
         </div>
         <div class="campo"><label>Observações gerais</label><textarea v-model="edicao.observacoes" /></div>
-        <p class="mudo pequeno">Alterar a data de referência recalcula todos os prazos do processo (RN21).</p>
+        <p class="mudo pequeno">Alterar a data de referência recalcula todos os prazos do processo.</p>
         <div class="inline"><button class="primario">Salvar</button><button type="button" @click="edicao = null">Cancelar</button></div>
       </form>
     </section>
@@ -201,7 +201,7 @@ const imprimir = () => window.print();
           <div class="campo"><label>Patrimônio / nº de série</label><input v-model="novoEq.patrimonio" /></div>
           <div class="campo"><label>Data de entrega</label><input v-model="novoEq.data_entrega" type="date" required /></div>
         </div>
-        <p class="mudo pequeno">Após registrar os itens, colete a assinatura do termo de entrega (RF20).</p>
+        <p class="mudo pequeno">Após registrar os itens, colete a assinatura do termo de entrega.</p>
         <footer><button type="button" @click="novoEq = null">Cancelar</button><button class="primario">Registrar</button></footer>
       </form>
     </div>

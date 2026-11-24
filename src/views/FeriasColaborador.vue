@@ -43,7 +43,7 @@ async function salvar() {
   }
 }
 async function cancelar(f: any) {
-  const motivo = await pedirTexto('Cancelar férias', `${data(f.inicio)} a ${data(f.fim)}. O registro ficará no histórico (RF39).`, 'Cancelar férias');
+  const motivo = await pedirTexto('Cancelar férias', `${data(f.inicio)} a ${data(f.fim)}. O registro ficará no histórico.`, 'Cancelar férias');
   if (motivo && await tentar(() => post(`/ferias/${f.id}/cancelar`, { motivo }), 'Férias canceladas.')) carregar();
 }
 async function editarFaltas(p: any) {
@@ -64,7 +64,7 @@ const podeEscrever = computed(() => pode('ferias:escrever') && d.value?.colabora
         <p>{{ d.colaborador.area ?? 'Sem área' }} · admissão em {{ data(d.colaborador.data_admissao) }} · <span class="etiqueta" :class="cor('status', d.colaborador.status)">{{ rotulo('status', d.colaborador.status) }}</span></p>
       </div>
     </div>
-    <div v-if="d.colaborador.status !== 'ATIVO'" class="aviso ambar">Pessoas com situação "{{ rotulo('status', d.colaborador.status) }}" não podem receber novos períodos de férias (RN29).</div>
+    <div v-if="d.colaborador.status !== 'ATIVO'" class="aviso ambar">Pessoas com situação "{{ rotulo('status', d.colaborador.status) }}" não podem receber novos períodos de férias.</div>
 
     <section v-for="p in d.periodos" :key="p.id" class="cartao">
       <div class="inline" style="justify-content:space-between;flex-wrap:wrap">

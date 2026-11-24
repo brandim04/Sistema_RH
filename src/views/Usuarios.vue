@@ -30,7 +30,7 @@ const PERMS: Record<string, string> = {
 <template>
   <div>
     <div class="topo">
-      <div><h1>Usuários e perfis</h1><p>Controle de acesso por perfil (RF53, RNF04).</p></div>
+      <div><h1>Usuários e perfis</h1><p>Controle de acesso por perfil.</p></div>
       <div class="acoes"><button @click="backup">Baixar cópia de segurança</button><button class="primario" @click="ed = { nome: '', email: '', perfil: 'RH', ativo: true, senha: '' }">+ Usuário</button></div>
     </div>
     <div class="cartao">

@@ -27,31 +27,31 @@ export const CHECKLIST_ADMISSAO: ItemModelo[] = [
   { categoria: 'Documentação', descricao: 'RG (Registro Geral)', orientacao: 'Não é obrigatório para o eSocial.', obrigatorio: false },
   { categoria: 'Documentação', descricao: 'CPF (Cadastro de Pessoa Física)', orientacao: 'Obrigatório para o eSocial.' },
   { categoria: 'Documentação', descricao: 'Raça/etnia', orientacao: 'Obrigatório para o eSocial.' },
-  { categoria: 'Documentação', descricao: 'Certidão de antecedentes criminais', orientacao: 'Obrigatória somente para instituições de ensino que trabalham com crianças e adolescentes; atualizar a cada 6 meses (RN12).', condicional: true },
+  { categoria: 'Documentação', descricao: 'Certidão de antecedentes criminais', orientacao: 'Obrigatória somente para instituições de ensino que trabalham com crianças e adolescentes; atualizar a cada 6 meses.', condicional: true },
   { categoria: 'Documentação', descricao: 'Título de eleitor', orientacao: 'Não é obrigatório para o eSocial.', obrigatorio: false },
   { categoria: 'Documentação', descricao: 'Certidão de nascimento/casamento', orientacao: 'Não é obrigatória para o eSocial.', obrigatorio: false },
-  { categoria: 'Documentação', descricao: 'Alistamento militar/reservista', orientacao: 'Não é obrigatório para o eSocial, mas é recomendável solicitar (RN05).', obrigatorio: false, condicional: true },
+  { categoria: 'Documentação', descricao: 'Alistamento militar/reservista', orientacao: 'Não é obrigatório para o eSocial, mas é recomendável solicitar.', obrigatorio: false, condicional: true },
   { categoria: 'Documentação', descricao: 'Comprovante de residência', orientacao: 'Obrigatório para o eSocial (contas de consumo, fatura de cartão, contrato de aluguel com firma reconhecida, declaração de residência).' },
   { categoria: 'Documentação', descricao: 'Comprovante de escolaridade' },
   { categoria: 'Documentação', descricao: 'Inscrição no PIS/PASEP', orientacao: 'Obrigatório somente para admissões até 02/2024 (regra com vigência configurável).', vigencia_fim: '2024-02-29' },
   { categoria: 'Documentação', descricao: 'Fotos', orientacao: 'Não é obrigatório para o eSocial.', obrigatorio: false },
-  { categoria: 'Documentação', descricao: 'CNH', orientacao: 'Obrigatória somente para motoristas (RN13).', condicional: true },
-  { categoria: 'Documentação', descricao: 'Certidão de nascimento dos(as) filhos(as)', orientacao: 'Para dependentes de salário-família (até 14 anos) e IRRF (até 21 anos) (RN14).', condicional: true },
+  { categoria: 'Documentação', descricao: 'CNH', orientacao: 'Obrigatória somente para motoristas.', condicional: true },
+  { categoria: 'Documentação', descricao: 'Certidão de nascimento dos(as) filhos(as)', orientacao: 'Para dependentes de salário-família (até 14 anos) e IRRF (até 21 anos).', condicional: true },
   { categoria: 'Documentação', descricao: 'Declaração para abertura de conta bancária' },
   { categoria: 'Documentação', descricao: 'Contrato de trabalho (redação e assinaturas)' },
-  { categoria: 'Documentação', descricao: 'Autorização para coleta de dados pessoais (LGPD)', orientacao: 'Dispensada se o contrato de trabalho já tiver cláusula de consentimento. Use o botão "Termo LGPD" para gerar o documento (RF17).', condicional: true },
-  { categoria: 'Documentação', descricao: 'Carteira nacional de vacinação', orientacao: 'Se aplicável à área de atuação (RN15).', condicional: true },
-  { categoria: 'Documentação', descricao: 'Certificados de cursos ou treinamentos obrigatórios', orientacao: 'Se aplicável. Exemplos: NR-35, NR-10, conforme a função (RN15).', condicional: true },
+  { categoria: 'Documentação', descricao: 'Autorização para coleta de dados pessoais (LGPD)', orientacao: 'Dispensada se o contrato de trabalho já tiver cláusula de consentimento. Use o botão "Termo LGPD" para gerar o documento.', condicional: true },
+  { categoria: 'Documentação', descricao: 'Carteira nacional de vacinação', orientacao: 'Se aplicável à área de atuação.', condicional: true },
+  { categoria: 'Documentação', descricao: 'Certificados de cursos ou treinamentos obrigatórios', orientacao: 'Se aplicável. Exemplos: NR-35, NR-10, conforme a função.', condicional: true },
   { categoria: 'Exames', descricao: 'Marcar exame médico admissional', prazo_dias: -5 },
-  { categoria: 'Exames', descricao: 'Atestado de saúde ocupacional (ASO) admissional', orientacao: 'Deve ser feito antes do início da prestação do serviço e custeado integralmente pela empresa (RN16).', prazo_dias: -1 },
-  { categoria: 'Exames', descricao: 'Exame toxicológico', orientacao: 'Obrigatório para motoristas (RN13).', condicional: true, prazo_dias: -1 },
+  { categoria: 'Exames', descricao: 'Atestado de saúde ocupacional (ASO) admissional', orientacao: 'Deve ser feito antes do início da prestação do serviço e custeado integralmente pela empresa.', prazo_dias: -1 },
+  { categoria: 'Exames', descricao: 'Exame toxicológico', orientacao: 'Obrigatório para motoristas.', condicional: true, prazo_dias: -1 },
   { categoria: 'Cadastros/acessos', descricao: 'Sistema de RH/DP/Folha de pagamento' },
   { categoria: 'Cadastros/acessos', descricao: 'Controle de ponto', orientacao: 'Controle de jornada obrigatório somente para empresas com mais de 20 colaboradores(as).', condicional: true },
-  { categoria: 'Cadastros/acessos', descricao: 'Cadastro no eSocial', orientacao: 'Enviar até 1 dia antes do início da prestação de serviço (RN17).', prazo_dias: -1 },
+  { categoria: 'Cadastros/acessos', descricao: 'Cadastro no eSocial', orientacao: 'Enviar até 1 dia antes do início da prestação de serviço.', prazo_dias: -1 },
   { categoria: 'Cadastros/acessos', descricao: 'Liberar/informar acesso à portaria/prédio' },
   { categoria: 'Onboarding', descricao: 'Criar e-mail corporativo' },
   { categoria: 'Onboarding', descricao: 'Enviar manual da pessoa colaboradora', orientacao: 'Incluir orientação sobre a política de segurança da informação, quando aplicável.' },
-  { categoria: 'Onboarding', descricao: 'Enviar equipamentos', orientacao: 'Registre os itens no inventário de equipamentos e colete a assinatura do termo de entrega (RF19/RF20, RN18).', condicional: true },
+  { categoria: 'Onboarding', descricao: 'Enviar equipamentos', orientacao: 'Registre os itens no inventário de equipamentos e colete a assinatura do termo de entrega.', condicional: true },
   { categoria: 'Onboarding', descricao: 'Entregar crachá de identificação' },
   { categoria: 'Onboarding', descricao: 'Disponibilizar login/senhas de acesso' },
   { categoria: 'Onboarding', descricao: 'Treinamento inicial obrigatório', orientacao: 'Segurança, conduta etc.' },
@@ -65,7 +65,7 @@ export const CHECKLIST_ADMISSAO: ItemModelo[] = [
 ];
 
 export const CHECKLIST_DESLIGAMENTO: ItemModelo[] = [
-  { categoria: 'Financeiro e legal', descricao: 'Checar modalidade de rescisão', orientacao: 'Pedido, sem justa causa, com justa causa etc. Confirme o motivo antes da conclusão (RN32).' },
+  { categoria: 'Financeiro e legal', descricao: 'Checar modalidade de rescisão', orientacao: 'Pedido, sem justa causa, com justa causa etc. Confirme o motivo antes da conclusão.' },
   { categoria: 'Financeiro e legal', descricao: 'Checar cumprimento do aviso prévio', orientacao: 'Na dispensa sem justa causa, a pessoa tem direito a redução de 2 horas na jornada ou a sair 7 dias antes do fim do aviso.', condicional: true },
   { categoria: 'Financeiro e legal', descricao: 'Saldo de salário' },
   { categoria: 'Financeiro e legal', descricao: 'Férias vencidas/proporcionais' },
@@ -77,8 +77,8 @@ export const CHECKLIST_DESLIGAMENTO: ItemModelo[] = [
   { categoria: 'Financeiro e legal', descricao: 'Conferir médias salariais', condicional: true },
   { categoria: 'Financeiro e legal', descricao: '13º salário proporcional' },
   { categoria: 'Financeiro e legal', descricao: 'Confirmação da entrega de documentos pessoais', orientacao: 'Ex.: carteira de trabalho com baixa na página do contrato.' },
-  { categoria: 'Exames', descricao: 'Marcar exame médico demissional', orientacao: 'Pode ser dispensado se o exame periódico estiver dentro do prazo (135 dias para graus de risco 1 e 2; 90 dias para graus 3 e 4) (RN33).', condicional: true, prazo_dias: 10 },
-  { categoria: 'Exames', descricao: 'Atestado de saúde ocupacional (ASO) demissional', orientacao: 'Até 10 dias após o término do contrato (RN33).', condicional: true, prazo_dias: 10 },
+  { categoria: 'Exames', descricao: 'Marcar exame médico demissional', orientacao: 'Pode ser dispensado se o exame periódico estiver dentro do prazo (135 dias para graus de risco 1 e 2; 90 dias para graus 3 e 4).', condicional: true, prazo_dias: 10 },
+  { categoria: 'Exames', descricao: 'Atestado de saúde ocupacional (ASO) demissional', orientacao: 'Até 10 dias após o término do contrato.', condicional: true, prazo_dias: 10 },
   { categoria: 'Documentos', descricao: 'Comprovante de pagamento da rescisão', orientacao: 'Pagamento das verbas em até 10 dias do término do contrato (CLT art. 477 §6º).', prazo_dias: 10 },
   { categoria: 'Documentos', descricao: 'Ficha de registro do(a) colaborador(a)' },
   { categoria: 'Cadastros/acessos', descricao: 'Baixa no eSocial' },
@@ -86,16 +86,16 @@ export const CHECKLIST_DESLIGAMENTO: ItemModelo[] = [
   { categoria: 'Cadastros/acessos', descricao: 'Baixa no controle de ponto', condicional: true },
   { categoria: 'Cadastros/acessos', descricao: 'Revogar acesso e informar portaria/prédio' },
   { categoria: 'Cadastros/acessos', descricao: 'Encerrar e-mail corporativo' },
-  { categoria: 'Cadastros/acessos', descricao: 'Encerrar benefícios', orientacao: 'Passe orientações sobre direitos pós-desligamento, como manutenção do plano de saúde e por quanto tempo (RN36).' },
+  { categoria: 'Cadastros/acessos', descricao: 'Encerrar benefícios', orientacao: 'Passe orientações sobre direitos pós-desligamento, como manutenção do plano de saúde e por quanto tempo.' },
   { categoria: 'Devolução de bens', descricao: 'Devolução do crachá' },
   { categoria: 'Devolução de bens', descricao: 'Devolução de EPI/uniforme', condicional: true },
-  { categoria: 'Devolução de bens', descricao: 'Devolução de equipamentos', orientacao: 'Confira usando o inventário assinado na admissão (aba Equipamentos) (RN39).', condicional: true },
+  { categoria: 'Devolução de bens', descricao: 'Devolução de equipamentos', orientacao: 'Confira usando o inventário assinado na admissão (aba Equipamentos).', condicional: true },
   { categoria: 'Offboarding', descricao: 'Atualização de contatos para futuras comunicações', orientacao: 'Para homologação, envio de documentos etc.' },
   { categoria: 'Offboarding', descricao: 'Entrevista de desligamento', obrigatorio: false, condicional: true },
 ];
 
 const DOC = 'Documentos da rescisão';
-const HOMOLOG = { categoria: DOC, descricao: 'Termo de quitação ou de homologação', orientacao: 'Homologação somente se a rescisão for homologada no sindicato (RN34).' };
+const HOMOLOG = { categoria: DOC, descricao: 'Termo de quitação ou de homologação', orientacao: 'Homologação somente se a rescisão for homologada no sindicato.' };
 const TRCT = { categoria: DOC, descricao: 'Termo de rescisão do contrato de trabalho (TRCT)' };
 const ESOCIAL = { categoria: DOC, descricao: 'Enviar a rescisão para o eSocial' };
 const EXTRATO_RESC = { categoria: DOC, descricao: 'Extrato do FGTS para fins rescisórios', orientacao: 'Com pouco tempo de serviço, pode ser emitido o extrato simples. Solicite cerca de 15 dias antes do fim do aviso.' };
@@ -213,12 +213,12 @@ export const PRAZOS_TECH: Etapa[] = [
 export const PARAMETROS: [string, string, string][] = [
   ['empresa_nome', 'Empresa Exemplo Ltda.', 'Nome da empresa usado no termo LGPD.'],
   ['encarregado_email', 'dpo@empresa.com.br', 'E-mail do(a) encarregado(a) de dados (LGPD).'],
-  ['alerta_dias', '3', 'Quantos dias antes do vencimento um prazo passa a gerar alerta (RF29).'],
+  ['alerta_dias', '3', 'Quantos dias antes do vencimento um prazo passa a gerar alerta.'],
   ['prazos_antecipar_fim_de_semana', 'true', 'Se a data limite cair no sábado/domingo, antecipa para sexta-feira (observação da planilha de prazos).'],
   ['ferias_alerta_limite_dias', '60', 'Alertar quando faltarem até N dias para a data limite de início das férias.'],
   ['ferias_bloquear_inicio_antes_dsr', 'true', 'Impede início das férias nos 2 dias que antecedem o repouso semanal (sexta e sábado) - CLT art. 134 §3º.'],
   ['ferias_dias_limite_apos_aquisitivo', '335', 'Dias após o fim do período aquisitivo para a data limite de início (planilha de férias: fim + 335).'],
-  ['termo_lgpd', 'Eu, {nome}, CPF {cpf}, autorizo a {empresa} a tratar os dados pessoais que forneci na admissão e durante o contrato de trabalho. Esses dados serão usados para as finalidades relacionadas ao meu emprego, como pagamento, benefícios, comunicação e cumprimento de obrigações legais.\n\nEstou ciente de que meus dados serão armazenados com segurança e de que posso solicitar acesso, correção ou eliminação dessas informações, nos termos da LGPD, pelo e-mail do(a) encarregado(a): {encarregado}.\n\nLi e compreendi esta autorização e concordo com o tratamento dos meus dados.', 'Texto do termo de consentimento LGPD (RF17). Campos: {nome} {cpf} {empresa} {encarregado}.'],
+  ['termo_lgpd', 'Eu, {nome}, CPF {cpf}, autorizo a {empresa} a tratar os dados pessoais que forneci na admissão e durante o contrato de trabalho. Esses dados serão usados para as finalidades relacionadas ao meu emprego, como pagamento, benefícios, comunicação e cumprimento de obrigações legais.\n\nEstou ciente de que meus dados serão armazenados com segurança e de que posso solicitar acesso, correção ou eliminação dessas informações, nos termos da LGPD, pelo e-mail do(a) encarregado(a): {encarregado}.\n\nLi e compreendi esta autorização e concordo com o tratamento dos meus dados.', 'Texto do termo de consentimento LGPD. Campos: {nome} {cpf} {empresa} {encarregado}.'],
 ];
 
 export const AREAS = ['Vendas', 'Marketing', 'RH', 'Engenharia', 'Tecnologia', 'Financeiro', 'Operações'];

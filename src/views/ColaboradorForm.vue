@@ -97,7 +97,7 @@ async function salvar() {
         <div class="campo"><label>Salário (R$)</label><input v-model="f.salario" type="number" min="0" step="0.01" /></div>
         <div v-if="!id" class="campo"><label>Situação inicial</label><select v-model="f.status"><option value="ATIVO">Ativo (já trabalha na empresa)</option><option value="EM_ADMISSAO">Em admissão (vai iniciar)</option></select></div>
       </div>
-      <p class="mudo pequeno">A data de demissão é preenchida automaticamente quando o processo de desligamento é concluído (RN03).</p>
+      <p class="mudo pequeno">A data de demissão é preenchida automaticamente quando o processo de desligamento é concluído.</p>
     </section>
   </form>
 </template>

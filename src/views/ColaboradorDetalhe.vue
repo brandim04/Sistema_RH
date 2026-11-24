@@ -24,7 +24,7 @@ async function verHistorico() { aba.value = 'historico'; historico.value = await
 
 async function alterarStatus(status: 'ATIVO' | 'INATIVO') {
   const ok = await confirmar(status === 'INATIVO' ? 'Inativar esta pessoa?' : 'Reativar esta pessoa?',
-    status === 'INATIVO' ? 'Pessoas inativas não recebem novos períodos de férias (RN29).' : '', status === 'INATIVO' ? 'Inativar' : 'Reativar', status === 'INATIVO');
+    status === 'INATIVO' ? 'Pessoas inativas não recebem novos períodos de férias.' : '', status === 'INATIVO' ? 'Inativar' : 'Reativar', status === 'INATIVO');
   if (ok && await tentar(() => post(`/colaboradores/${c.value.id}/status`, { status }), 'Situação atualizada.')) carregar();
 }
 async function novaAdmissao() {

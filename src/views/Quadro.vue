@@ -9,7 +9,7 @@ onMounted(async () => { q.value = await get('/colaboradores/quadro'); });
 
 <template>
   <div v-if="q">
-    <div class="topo"><div><h1>Quadro de pessoal</h1><p>Equivale à aba "Painel de controle" da planilha de cadastro (RF10).</p></div></div>
+    <div class="topo"><div><h1>Quadro de pessoal</h1><p>Equivale à aba "Painel de controle" da planilha de cadastro.</p></div></div>
     <div class="grade g4">
       <div class="cartao kpi"><div class="valor num">{{ q.totais.ativos }}</div><div class="rotulo">Pessoas no quadro</div></div>
       <div class="cartao kpi"><div class="valor num">{{ q.totais.admitidos_ano }}</div><div class="rotulo">Admitidas no ano</div></div>

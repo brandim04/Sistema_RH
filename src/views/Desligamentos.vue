@@ -34,7 +34,7 @@ async function criar() {
 <template>
   <div>
     <div class="topo">
-      <div><h1>Desligamentos</h1><p>Checklist por etapas, modalidade de rescisão, verbas, devolução de bens e conclusão (RF40–RF47).</p></div>
+      <div><h1>Desligamentos</h1><p>Checklist por etapas, modalidade de rescisão, verbas, devolução de bens e conclusão.</p></div>
       <div class="acoes">
         <select v-model="status" style="width:auto"><option value="ABERTO">Em andamento</option><option value="CONCLUIDO">Concluídos</option><option value="CANCELADO">Cancelados</option><option value="">Todos</option></select>
         <button v-if="pode('processo:escrever')" class="primario" @click="abrir()">+ Novo desligamento</button>

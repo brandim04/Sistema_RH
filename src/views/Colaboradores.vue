@@ -57,7 +57,7 @@ async function importar() {
 <template>
   <div>
     <div class="topo">
-      <div><h1>Colaboradores</h1><p>Cadastro único usado por admissão, férias e desligamento (RN07).</p></div>
+      <div><h1>Colaboradores</h1><p>Cadastro único usado por admissão, férias e desligamento.</p></div>
       <div class="acoes">
         <button @click="exportar">Exportar Excel</button>
         <label v-if="pode('colaborador:escrever')" class="botao" style="margin:0;font-size:14px;color:var(--tinta);font-weight:400">Importar planilha<input type="file" accept=".xlsx" hidden @change="escolherArquivo" /></label>

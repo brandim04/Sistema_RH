@@ -124,24 +124,24 @@ export function validarFerias(e: ValidacaoFeriasEntrada) {
   const outras = e.existentes.filter((f) => f.status !== 'CANCELADA' && f.id !== e.ignorarId);
 
   if (e.colaboradorStatus !== 'ATIVO') {
-    erros.push('RN29: somente pessoas colaboradoras ativas podem receber novos períodos de férias.');
+    erros.push('Somente pessoas colaboradoras ativas podem receber novos períodos de férias.');
   }
   if (inicio > fim) {
-    erros.push('RN25: a data de início não pode ser posterior à data de término.');
+    erros.push('A data de início não pode ser posterior à data de término.');
     return { erros, avisos, dias: 0 };
   }
   const dias = contarDias(inicio, fim);
 
   if (e.hoje <= e.periodo.fim) {
-    erros.push(`RN24: o período aquisitivo ${e.periodo.numero} só se completa em ${e.periodo.fim}; a pessoa ainda não está apta a usufruir dessas férias.`);
+    erros.push(`O período aquisitivo ${e.periodo.numero} só se completa em ${e.periodo.fim}; a pessoa ainda não está apta a usufruir dessas férias.`);
   }
   if (inicio <= e.periodo.fim) {
-    erros.push('RN23: as férias devem começar depois do fim do período aquisitivo a que se referem.');
+    erros.push('As férias devem começar depois do fim do período aquisitivo a que se referem.');
   }
 
   const conflito = outras.find((f) => sobrepoe(inicio, fim, f.inicio, f.fim));
   if (conflito) {
-    erros.push(`RN26: conflito com férias já registradas de ${conflito.inicio} a ${conflito.fim}.`);
+    erros.push(`Conflito com férias já registradas de ${conflito.inicio} a ${conflito.fim}.`);
   }
 
   // RN27 - CLT art. 130 e art. 134 §1º (fracionamento em até 3 períodos)
@@ -149,25 +149,25 @@ export function validarFerias(e: ValidacaoFeriasEntrada) {
   const doPeriodo = outras.filter((f) => e.periodo.id === undefined || f.periodo_aquisitivo_id === e.periodo.id);
   const usados = doPeriodo.reduce((s, f) => s + f.dias, 0);
   const parcelas = [...doPeriodo.map((f) => f.dias), dias];
-  if (direito === 0) erros.push('RN27: sem direito a férias neste período (mais de 32 faltas injustificadas).');
+  if (direito === 0) erros.push('Sem direito a férias neste período (mais de 32 faltas injustificadas).');
   if (usados + dias > direito) {
-    erros.push(`RN27: o período tem ${direito} dias de direito; já há ${usados} dias registrados e foram solicitados ${dias}.`);
+    erros.push(`O período tem ${direito} dias de direito; já há ${usados} dias registrados e foram solicitados ${dias}.`);
   }
-  if (parcelas.length > 3) erros.push('RN27: as férias podem ser fracionadas em no máximo 3 períodos.');
-  if (dias < 5) erros.push('RN27: nenhum período de férias pode ter menos de 5 dias corridos.');
+  if (parcelas.length > 3) erros.push('As férias podem ser fracionadas em no máximo 3 períodos.');
+  if (dias < 5) erros.push('Nenhum período de férias pode ter menos de 5 dias corridos.');
   const temQuatorze = parcelas.some((d) => d >= 14);
   const restante = direito - usados - dias;
   if (!temQuatorze && direito >= 14) {
     const parcelasRestantes = 3 - parcelas.length;
     if (restante < 14 || parcelasRestantes < 1) {
-      erros.push('RN27: um dos períodos de férias deve ter pelo menos 14 dias corridos.');
+      erros.push('Um dos períodos de férias deve ter pelo menos 14 dias corridos.');
     }
   }
 
   if (e.bloquearInicioAntesDsr) {
     const wd = weekday(inicio);
     if (wd === 5 || wd === 6) {
-      erros.push('RN27: as férias não podem começar nos 2 dias que antecedem o repouso semanal (sexta-feira ou sábado) - CLT art. 134 §3º.');
+      erros.push('As férias não podem começar nos 2 dias que antecedem o repouso semanal (sexta-feira ou sábado) - CLT art. 134 §3º.');
     }
   }
 

@@ -1,6 +1,6 @@
 # Sistema de Ciclo de Vida do Colaborador — Grupo 2
 
-Sistema web full-stack que transforma as planilhas de RH do Grupo 2 (**Cadastro de Pessoas Colaboradoras**, **Controle de Férias**, **Checklist de Admissão e Desligamento** e **Gerenciamento de Prazos na Admissão**) em uma aplicação única, com cadastro compartilhado entre os módulos.
+Sistema web full-stack que transforma as planilhas de RH do Grupo 2 (Cadastro de Pessoas Colaboradoras, Controle de Férias, Checklist de Admissão e Desligamento e Gerenciamento de Prazos na Admissão) em uma aplicação única, com cadastro compartilhado entre os módulos.
 
 | Camada | Tecnologia |
 |---|---|
@@ -11,12 +11,12 @@ Sistema web full-stack que transforma as planilhas de RH do Grupo 2 (**Cadastro 
 
 ## Funcionalidades
 
-- **Cadastro**: dados pessoais e profissionais, busca por nome, consulta rápida, quadro de pessoal (área, nível, cargo, faixa salarial), importação da planilha original (.xlsx) e exportação para Excel.
-- **Admissão**: checklist gerado a partir do modelo da planilha (Documentação, Exames, Cadastros/acessos, Onboarding), com feito / não feito / não se aplica, observações, orientações, anexos, percentual de conclusão, termo LGPD imprimível, inventário de equipamentos e termo de entrega.
-- **Prazos**: etapas calculadas a partir do 1º dia (mesmos offsets da planilha), dia da semana, responsável, situação (no prazo, vence em breve, atrasada), recálculo automático, modelos duplicáveis e alertas no painel.
-- **Férias**: períodos aquisitivos, data limite (fórmula da planilha), situação, programação com validação da CLT (conflitos, fracionamento, faltas, início antes do DSR), cancelamento com histórico e mapa de férias filtrável.
-- **Desligamento**: modalidade de rescisão com documentos específicos, confirmação do motivo, aviso prévio, conferência de verbas, devolução de bens com base no inventário da admissão, guia FGTS Digital, bloqueio de conclusão com pendências e atualização automática para "Desligado".
-- **Geral**: login, 5 perfis de acesso (Administrador, RH, DP, Gestor, TI), auditoria de todas as alterações, configurações sem alterar código, CPF cifrado, exportação Excel/PDF e cópia de segurança.
+- Cadastro: dados pessoais e profissionais, busca por nome, consulta rápida, quadro de pessoal (área, nível, cargo, faixa salarial), importação da planilha original (.xlsx) e exportação para Excel.
+- Admissão: checklist gerado a partir do modelo da planilha (Documentação, Exames, Cadastros/acessos, Onboarding), com feito / não feito / não se aplica, observações, orientações, anexos, percentual de conclusão, termo LGPD imprimível, inventário de equipamentos e termo de entrega.
+- Prazos: etapas calculadas a partir do 1º dia (mesmos offsets da planilha), dia da semana, responsável, situação (no prazo, vence em breve, atrasada), recálculo automático, modelos duplicáveis e alertas no painel.
+- Férias: períodos aquisitivos, data limite (fórmula da planilha), situação, programação com validação da CLT (conflitos, fracionamento, faltas, início antes do DSR), cancelamento com histórico e mapa de férias filtrável.
+- Desligamento: modalidade de rescisão com documentos específicos, confirmação do motivo, aviso prévio, conferência de verbas, devolução de bens com base no inventário da admissão, guia FGTS Digital, bloqueio de conclusão com pendências e atualização automática para "Desligado".
+- Geral: login, 5 perfis de acesso (Administrador, RH, DP, Gestor, TI), auditoria de todas as alterações, configurações sem alterar código, CPF cifrado, exportação Excel/PDF e cópia de segurança.
 
 ## Documentação de engenharia (SWEBOK v4 / IEEE)
 
@@ -31,7 +31,7 @@ Sistema web full-stack que transforma as planilhas de RH do Grupo 2 (**Cadastro 
 
 ## Rodando localmente
 
-Pré-requisito: **Node.js 20 ou superior**.
+Pré-requisito: Node.js 20 ou superior.
 
 ```bash
 npm install
@@ -40,7 +40,7 @@ npm run dev             # terminal 2: API em :3001 e interface em http://localho
 npm run demo            # (opcional) terminal 3: popula dados de demonstração
 ```
 
-Acesso inicial: **admin@empresa.com / Admin@123**. Após `npm run demo` também existem `rh@empresa.com`, `gestor@empresa.com` e `ti@empresa.com` (senha `Senha@123`).
+Acesso inicial: admin@empresa.com / Admin@123. Após `npm run demo` também existem `rh@empresa.com`, `gestor@empresa.com` e `ti@empresa.com` (senha `Senha@123`).
 
 Testes:
 ```bash
@@ -51,23 +51,23 @@ npm run test:coverage
 
 ## Publicando na Vercel (passo a passo)
 
-1. **Suba o código para o GitHub** (repositório do grupo).
-2. Em [vercel.com](https://vercel.com), clique em **Add New → Project** e importe o repositório. A Vercel detecta o `vercel.json` (framework Vite, saída `dist`, função `api/index.ts`). Ainda **não** clique em Deploy, ou aceite que o primeiro deploy falhe sem banco.
-3. **Crie o banco**: no projeto, aba **Storage → Create Database → Neon (Postgres)** → conecte ao projeto. Isso cria a variável `DATABASE_URL` automaticamente.
-4. Em **Settings → Environment Variables**, adicione:
+1. Suba o código para o GitHub (repositório do grupo).
+2. Em [vercel.com](https://vercel.com), clique em Add New → Project e importe o repositório. A Vercel detecta o `vercel.json` (framework Vite, saída `dist`, função `api/index.ts`). Ainda não clique em Deploy, ou aceite que o primeiro deploy falhe sem banco.
+3. Crie o banco: no projeto, aba Storage → Create Database → Neon (Postgres) → conecte ao projeto. Isso cria a variável `DATABASE_URL` automaticamente.
+4. Em Settings → Environment Variables, adicione:
    - `JWT_SECRET` — valor aleatório longo
    - `DATA_KEY` — outro valor aleatório longo (**não altere depois**: ele cifra os CPFs)
    - `ADMIN_EMAIL` e `ADMIN_PASSWORD` — usuário administrador inicial
 
    Para gerar valores: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
-5. **Deploy** (ou *Redeploy*). No primeiro acesso a API cria as tabelas e carrega os modelos extraídos das planilhas.
+5. Deploy (ou Redeploy). No primeiro acesso a API cria as tabelas e carrega os modelos extraídos das planilhas.
 6. (Opcional) Popule a demonstração apontando para a URL publicada:
    ```bash
    npx tsx scripts/demo.ts https://SEU-PROJETO.vercel.app admin@empresa.com SUA_SENHA
    ```
-7. Troque a senha do administrador em **Alterar senha**.
+7. Troque a senha do administrador em Alterar senha.
 
-Cada push na `main` gera um novo deploy; cada *pull request* gera uma URL de *preview* para revisão.
+Cada push na `main` gera um novo deploy; cada pull request gera uma URL de preview para revisão.
 
 ## Estrutura do projeto
 
@@ -94,6 +94,6 @@ scripts/demo.ts           Dados de demonstração
 
 ## Limitações conhecidas
 - Não há integração automática com eSocial e FGTS Digital (apenas orientações), conforme o escopo do DRS.
-- Verbas rescisórias são **conferidas** (valores informados), não calculadas.
+- Verbas rescisórias são conferidas (valores informados), não calculadas.
 - Feriados não são considerados na regra de início de férias (apenas o repouso semanal).
 - Anexos limitados a 2 MB por arquivo.

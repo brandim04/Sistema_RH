@@ -87,7 +87,7 @@ export async function pendenciasAdmissao(db: Db | undefined, admissaoId: number)
   const itens = await query('SELECT id, descricao, categoria, obrigatorio, status FROM checklist_itens WHERE admissao_id=$1', [admissaoId], db);
   const lista = pendenciasObrigatorias(itens).map((i) => `Item obrigatório pendente: ${i.descricao}`);
   const eq = await one<{ n: number }>('SELECT count(*)::int AS n FROM equipamentos WHERE admissao_id=$1', [admissaoId], db);
-  if (eq!.n > 0 && !ad.termo_equipamentos_assinado) lista.push('RF20: termo de entrega de equipamentos não assinado.');
+  if (eq!.n > 0 && !ad.termo_equipamentos_assinado) lista.push('Termo de entrega de equipamentos não assinado.');
   return { lista, progresso: progresso(itens) };
 }
 
@@ -96,10 +96,10 @@ export async function pendenciasDesligamento(db: Db | undefined, desligamentoId:
   const d = await one('SELECT * FROM desligamentos WHERE id=$1', [desligamentoId], db);
   const itens = await query('SELECT id, descricao, categoria, obrigatorio, status FROM checklist_itens WHERE desligamento_id=$1', [desligamentoId], db);
   const lista = pendenciasObrigatorias(itens).map((i) => `Item obrigatório pendente: ${i.descricao}`);
-  if (!d.modalidade_id) lista.unshift('RN31: selecione a modalidade de rescisão.');
-  if (!d.motivo_confirmado) lista.unshift('RN32: confirme o motivo do desligamento.');
+  if (!d.modalidade_id) lista.unshift('Selecione a modalidade de rescisão.');
+  if (!d.motivo_confirmado) lista.unshift('Confirme o motivo do desligamento.');
   const eq = await query("SELECT descricao FROM equipamentos WHERE colaborador_id=$1 AND status='ENTREGUE'", [d.colaborador_id], db);
-  for (const e of eq) lista.push(`RN39: equipamento não devolvido: ${e.descricao}`);
+  for (const e of eq) lista.push(`Equipamento não devolvido: ${e.descricao}`);
   return { lista, progresso: progresso(itens) };
 }
 

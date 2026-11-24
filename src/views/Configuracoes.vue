@@ -55,7 +55,7 @@ async function excluirEtapa(e: any) {
   if (await confirmar('Excluir etapa?', e.etapa, 'Excluir', true) && await tentar(() => del(`/config/etapas/${e.id}`))) carregarModelos();
 }
 async function duplicar() {
-  const nome = await pedirTexto('Duplicar modelo (RF28)', `Nome do novo modelo (cópia de "${modelo.value.nome}"):`, 'Duplicar');
+  const nome = await pedirTexto('Duplicar modelo', `Nome do novo modelo (cópia de "${modelo.value.nome}"):`, 'Duplicar');
   if (nome && await tentar(async () => { const m = await post(`/config/modelos-prazo/${modeloSel.value}/duplicar`, { nome }); await carregarModelos(); modeloSel.value = m.id; }, 'Modelo duplicado.')) return;
 }
 async function tornarPadrao() {
@@ -90,7 +90,7 @@ onMounted(async () => { modalidades.value = await get('/modalidades'); modalidad
 
 <template>
   <div>
-    <div class="topo"><div><h1>Configurações</h1><p>Checklists, modalidades, prazos e regras parametrizáveis sem alterar o código (RNF06). As mudanças valem para processos criados depois.</p></div></div>
+    <div class="topo"><div><h1>Configurações</h1><p>Checklists, modalidades, prazos e regras parametrizáveis sem alterar o código. As mudanças valem para processos criados depois.</p></div></div>
     <div class="abas">
       <button :class="{ ativa: aba === 'admissao' }" @click="aba = 'admissao'">Checklist de admissão</button>
       <button :class="{ ativa: aba === 'desligamento' }" @click="aba = 'desligamento'">Checklist de desligamento</button>
@@ -179,7 +179,7 @@ onMounted(async () => { modalidades.value = await get('/modalidades'); modalidad
           <div class="campo"><label>Ordem</label><input v-model.number="itemEd.ordem" type="number" /></div>
         </div>
         <div class="campo"><label>Descrição</label><input v-model="itemEd.descricao" required /></div>
-        <div class="campo"><label>Orientação / exigência (RF15)</label><textarea v-model="itemEd.orientacao" /></div>
+        <div class="campo"><label>Orientação / exigência</label><textarea v-model="itemEd.orientacao" /></div>
         <div class="form-grade">
           <div class="campo"><label>Prazo (dias em relação à data do processo)</label><input v-model="itemEd.prazo_dias" type="number" placeholder="Ex.: -1 ou 10" /></div>
           <div class="campo"><label>Vigência — início</label><input v-model="itemEd.vigencia_inicio" type="date" /></div>

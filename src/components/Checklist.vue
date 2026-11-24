@@ -114,7 +114,7 @@ async function removerItem(i: any) {
         <div class="nao-imprimir" style="text-align:right">
           <div class="seg" role="group" :aria-label="`Situação de ${i.descricao}`">
             <button v-for="s in ['FEITO', 'NAO_FEITO', 'NA']" :key="s" :class="[s, { on: i.status === s }]"
-                    :disabled="!podeMarcar || (s === 'NA' && !i.condicional)" :title="s === 'NA' && !i.condicional ? 'Item não condicional (RN10)' : ''"
+                    :disabled="!podeMarcar || (s === 'NA' && !i.condicional)" :title="s === 'NA' && !i.condicional ? 'Item não condicional' : ''"
                     @click="marcar(i, s)">{{ rotulo('item', s) }}</button>
           </div>
           <div v-if="podeMarcar" style="margin-top:6px" class="inline" >

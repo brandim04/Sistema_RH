@@ -1,7 +1,7 @@
 # Descrição de Projeto e Arquitetura de Software (SDD)
 
-**Sistema de Ciclo de Vida do Colaborador — Grupo 2**
-Versão 1.0 · Estrutura baseada na **IEEE 1016-2009** (Software Design Descriptions) e na **ISO/IEC/IEEE 42010:2022** (Architecture Description). Áreas do **SWEBOK v4**: *Software Architecture* (cap. 2), *Software Design* (cap. 3), *Software Construction* (cap. 4) e *Software Security* (cap. 13).
+Sistema de Ciclo de Vida do Colaborador — Grupo 2
+Versão 1.0 · Estrutura baseada na IEEE 1016-2009 (Software Design Descriptions) e na ISO/IEC/IEEE 42010:2022 (Architecture Description). Áreas do SWEBOK v4: Software Architecture (cap. 2), Software Design (cap. 3), Software Construction (cap. 4) e Software Security (cap. 13).
 
 | Item | Conteúdo |
 |---|---|
@@ -17,12 +17,12 @@ Versão 1.0 · Estrutura baseada na **IEEE 1016-2009** (Software Design Descript
 Descrever as decisões de arquitetura e de projeto tomadas para atender ao DRS, de forma que qualquer requisito possa ser localizado no código (ver `03-matriz-rastreabilidade.md`) e que a solução possa ser mantida e evoluída (RNF18).
 
 ### 1.2 Escopo
-O sistema centraliza o ciclo de vida da pessoa colaboradora: **cadastro**, **admissão** (checklist + prazos), **férias** (períodos aquisitivos, programação e mapa) e **desligamento** (modalidade de rescisão, checklist, devolução de bens), além de **autenticação, perfis, auditoria, exportação e configurações**.
+O sistema centraliza o ciclo de vida da pessoa colaboradora: cadastro, admissão (checklist + prazos), férias (períodos aquisitivos, programação e mapa) e desligamento (modalidade de rescisão, checklist, devolução de bens), além de autenticação, perfis, auditoria, exportação e configurações.
 
 ### 1.3 Definições
 | Termo | Significado |
 |---|---|
-| SPA | *Single Page Application*: interface carregada uma vez no navegador |
+| SPA | Single Page Application: interface carregada uma vez no navegador |
 | API REST | Interface HTTP/JSON entre interface e servidor |
 | Função serverless | Código executado sob demanda pela Vercel, sem servidor dedicado |
 | Período aquisitivo | 12 meses de trabalho que geram direito a férias (CLT art. 130) |
@@ -47,47 +47,47 @@ O sistema centraliza o ciclo de vida da pessoa colaboradora: **cadastro**, **adm
 
 ## 3. Decisões de arquitetura (ADR)
 
-Cada decisão segue o formato *contexto → decisão → consequências*, conforme recomenda o SWEBOK (cap. 2, *Architecture Design Decisions*).
+Cada decisão segue o formato contexto → decisão → consequências, conforme recomenda o SWEBOK (cap. 2, Architecture Design Decisions).
 
 ### ADR-01 — Arquitetura em camadas com SPA + API REST + banco relacional
-- **Contexto:** o DRS 4.1 separa interface web, API/regras de negócio, autenticação, banco relacional e armazenamento de documentos.
-- **Decisão:** três camadas — *Apresentação* (Vue 3 SPA), *Aplicação/Domínio* (API Node.js) e *Dados* (PostgreSQL). As regras de negócio puras ficam isoladas em `server/domain/` (sem acesso a banco ou HTTP).
-- **Consequências:** regras testáveis por testes de unidade; troca de interface ou de banco não afeta o domínio (RNF18).
+- Contexto: o DRS 4.1 separa interface web, API/regras de negócio, autenticação, banco relacional e armazenamento de documentos.
+- Decisão: três camadas — Apresentação (Vue 3 SPA), Aplicação/Domínio (API Node.js) e Dados (PostgreSQL). As regras de negócio puras ficam isoladas em `server/domain/` (sem acesso a banco ou HTTP).
+- Consequências: regras testáveis por testes de unidade; troca de interface ou de banco não afeta o domínio (RNF18).
 
 ### ADR-02 — Express em vez de NestJS na camada de API
-- **Contexto:** o DRS 4.1.1 propôs NestJS "como proposta inicial a ser confirmada". A entrega exige execução na Vercel, que roda a API como **função serverless**. NestJS adiciona tempo de inicialização (*cold start*) e configuração extra de adaptadores nesse modelo.
-- **Decisão:** usar **Express 5 + TypeScript**, exposto por uma única função `api/index.ts`. A organização por módulos do NestJS foi mantida por convenção: um roteador por módulo do DRS (`routes/colaboradores.ts`, `routes/processos.ts`, `routes/ferias.ts`, `routes/admin.ts`), validação de entrada com **Zod** (equivalente aos *DTOs/pipes*) e middlewares de autenticação/autorização (equivalentes aos *guards*).
-- **Consequências:** implantação sem ajustes na Vercel, menor tempo de resposta inicial; perde-se a injeção de dependências do NestJS (aceitável no porte do projeto). **Atualizar o DRS 4.1.1 com esta decisão.**
+- Contexto: o DRS 4.1.1 propôs NestJS "como proposta inicial a ser confirmada". A entrega exige execução na Vercel, que roda a API como função serverless. NestJS adiciona tempo de inicialização (cold start) e configuração extra de adaptadores nesse modelo.
+- Decisão: usar Express 5 + TypeScript, exposto por uma única função `api/index.ts`. A organização por módulos do NestJS foi mantida por convenção: um roteador por módulo do DRS (`routes/colaboradores.ts`, `routes/processos.ts`, `routes/ferias.ts`, `routes/admin.ts`), validação de entrada com Zod (equivalente aos DTOs/pipes) e middlewares de autenticação/autorização (equivalentes aos guards).
+- Consequências: implantação sem ajustes na Vercel, menor tempo de resposta inicial; perde-se a injeção de dependências do NestJS (aceitável no porte do projeto). Atualizar o DRS 4.1.1 com esta decisão.
 
 ### ADR-03 — PostgreSQL com integridade garantida no banco
-- **Decisão:** PostgreSQL (Neon, integrado à Vercel). Regras que podem ser garantidas pelo banco viram restrições: `UNIQUE` (CPF — RN02; uma admissão/desligamento aberto por pessoa), `CHECK` (nível — RN04, estado civil — RN06, data de demissão — RN03, "Não se aplica" só em item condicional — RN10, datas de férias — RN25), chaves estrangeiras (RN07, RN08, RN23, RN30).
-- **Consequências:** mesmo um erro na aplicação não grava dados inconsistentes (RNF11). Erros de restrição são traduzidos em mensagens com o código da regra.
+- Decisão: PostgreSQL (Neon, integrado à Vercel). Regras que podem ser garantidas pelo banco viram restrições: `UNIQUE` (CPF — RN02; uma admissão/desligamento aberto por pessoa), `CHECK` (nível — RN04, estado civil — RN06, data de demissão — RN03, "Não se aplica" só em item condicional — RN10, datas de férias — RN25), chaves estrangeiras (RN07, RN08, RN23, RN30).
+- Consequências: mesmo um erro na aplicação não grava dados inconsistentes (RNF11). Erros de restrição são traduzidos em mensagens em linguagem natural; o código da regra não é exibido ao usuário, apenas fica registrado nos comentários do código e nesta documentação.
 
 ### ADR-04 — SQL explícito (driver `pg`) em vez de ORM
-- **Decisão:** consultas SQL parametrizadas via `pg`. O esquema completo está em `server/schema.sql`.
-- **Consequências:** o modelo de dados é legível para a avaliação, não há geração de binários na implantação e as consultas são protegidas contra *SQL injection* por parâmetros (`$1, $2…`).
+- Decisão: consultas SQL parametrizadas via `pg`. O esquema completo está em `server/schema.sql`.
+- Consequências: o modelo de dados é legível para a avaliação, não há geração de binários na implantação e as consultas são protegidas contra SQL injection por parâmetros (`$1, $2…`).
 
 ### ADR-05 — Regras legais como dados configuráveis (RNF06, DRS 2.5)
-- **Decisão:** itens de checklist, modalidades de rescisão, etapas de prazo e parâmetros ficam em tabelas (`modelo_checklist_itens`, `modalidades_rescisao`, `modelos_prazo`, `modelo_prazo_etapas`, `parametros`), editáveis pela tela **Configurações**. Itens têm **prazo relativo** (`prazo_dias`) e **vigência** (`vigencia_inicio`/`vigencia_fim`).
-- **Exemplo:** "Inscrição no PIS/PASEP" tem vigência até 29/02/2024; admissões posteriores recebem o item automaticamente como "Não se aplica — fora da vigência".
-- **Consequências:** mudança de legislação não exige alterar código.
+- Decisão: itens de checklist, modalidades de rescisão, etapas de prazo e parâmetros ficam em tabelas (`modelo_checklist_itens`, `modalidades_rescisao`, `modelos_prazo`, `modelo_prazo_etapas`, `parametros`), editáveis pela tela Configurações. Itens têm prazo relativo (`prazo_dias`) e vigência (`vigencia_inicio`/`vigencia_fim`).
+- Exemplo: "Inscrição no PIS/PASEP" tem vigência até 29/02/2024; admissões posteriores recebem o item automaticamente como "Não se aplica — fora da vigência".
+- Consequências: mudança de legislação não exige alterar código.
 
 ### ADR-06 — Proteção de dados pessoais (RNF01, RNF02)
-- **Decisão:** CPF armazenado **cifrado** (AES-256-GCM) e acompanhado de um **HMAC-SHA256** para garantir unicidade sem guardar o CPF em claro. Conexão com o banco por TLS; HTTPS fornecido pela Vercel. Dados sensíveis (CPF completo, RG, salário, CTPS, PIS, documentos) só são entregues pela API a perfis com a permissão `colaborador:sensivel`.
-- **Consequências:** a chave `DATA_KEY` não pode ser trocada depois do primeiro cadastro (documentado no guia de implantação).
+- Decisão: CPF armazenado cifrado (AES-256-GCM) e acompanhado de um HMAC-SHA256 para garantir unicidade sem guardar o CPF em claro. Conexão com o banco por TLS; HTTPS fornecido pela Vercel. Dados sensíveis (CPF completo, RG, salário, CTPS, PIS, documentos) só são entregues pela API a perfis com a permissão `colaborador:sensivel`.
+- Consequências: a chave `DATA_KEY` não pode ser trocada depois do primeiro cadastro (documentado no guia de implantação).
 
 ### ADR-07 — Sessão por JWT em cookie HttpOnly
-- **Decisão:** login gera JWT (8 h) gravado em cookie `HttpOnly`, `SameSite=Lax`, `Secure` em produção. Senhas com **bcrypt**. Limite de 5 tentativas de login em 5 minutos por e-mail.
-- **Consequências:** o token não fica acessível a scripts da página (mitiga XSS); funciona em ambiente serverless sem estado.
+- Decisão: login gera JWT (8 h) gravado em cookie `HttpOnly`, `SameSite=Lax`, `Secure` em produção. Senhas com bcrypt. Limite de 5 tentativas de login em 5 minutos por e-mail.
+- Consequências: o token não fica acessível a scripts da página (mitiga XSS); funciona em ambiente serverless sem estado.
 
 ### ADR-08 — Anexos no próprio banco (BYTEA, até 2 MB)
-- **Contexto:** a Vercel não oferece disco persistente.
-- **Decisão:** anexos (PDF/imagens) gravados em `documentos.conteudo` (BYTEA), limitados a 2 MB e a tipos permitidos.
-- **Consequências:** solução simples e sem serviço extra; para volumes maiores, a evolução natural é mover o conteúdo para um *object storage* mantendo a tabela como referência (o DRS 4.1 já prevê "referência ao arquivo no banco").
+- Contexto: a Vercel não oferece disco persistente.
+- Decisão: anexos (PDF/imagens) gravados em `documentos.conteudo` (BYTEA), limitados a 2 MB e a tipos permitidos.
+- Consequências: solução simples e sem serviço extra; para volumes maiores, a evolução natural é mover o conteúdo para um object storage mantendo a tabela como referência (o DRS 4.1 já prevê "referência ao arquivo no banco").
 
 ### ADR-09 — Inicialização automática do banco
-- **Decisão:** no primeiro acesso, a API cria o esquema e carrega os **dados extraídos das planilhas** (checklists, modalidades, prazos, parâmetros) e o usuário administrador (`server/seed.ts`), protegido por *advisory lock* e versão de esquema (`schema_meta`).
-- **Consequências:** implantar na Vercel não exige rodar scripts manualmente.
+- Decisão: no primeiro acesso, a API cria o esquema e carrega os dados extraídos das planilhas (checklists, modalidades, prazos, parâmetros) e o usuário administrador (`server/seed.ts`), protegido por advisory lock e versão de esquema (`schema_meta`).
+- Consequências: implantar na Vercel não exige rodar scripts manualmente.
 
 ---
 
@@ -212,7 +212,7 @@ erDiagram
     bool concluida
   }
 ```
-A definição completa (tipos, restrições e índices) está em `server/schema.sql`. Correspondência com o DRS 4.2.2: *Colaborador + Dados profissionais* foram mantidos em uma única tabela `colaboradores` (relação 1:1, sem ganho em separar); as demais entidades correspondem uma a uma.
+A definição completa (tipos, restrições e índices) está em `server/schema.sql`. Correspondência com o DRS 4.2.2: Colaborador + Dados profissionais foram mantidos em uma única tabela `colaboradores` (relação 1:1, sem ganho em separar); as demais entidades correspondem uma a uma.
 
 ### 4.4 Visão de processo — ciclo de vida da pessoa
 
@@ -260,7 +260,7 @@ flowchart LR
 ```
 - `vercel.json`: `/api/*` → função; demais rotas → `index.html` (roteamento da SPA).
 - Variáveis de ambiente: `DATABASE_URL`, `JWT_SECRET`, `DATA_KEY`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`.
-- Backup (RNF17): *point-in-time restore* do Neon + exportação lógica em JSON pela tela Usuários (`GET /api/admin/backup`).
+- Backup (RNF17): point-in-time restore do Neon + exportação lógica em JSON pela tela Usuários (`GET /api/admin/backup`).
 
 ### 4.6 Visão de segurança — matriz de perfis × permissões (RNF04, RN40)
 
@@ -279,11 +279,11 @@ flowchart LR
 | `auditoria:ler` | ✓ | ✓ | ✓ | | |
 | `usuario:admin` (usuários, backup) | ✓ | | | | |
 
-A matriz está implementada em `server/infra.ts` (`PERMISSOES`) e é verificada em **todas** as rotas pelo middleware `exigir(...)`. A interface apenas esconde botões; a proteção real é no servidor.
+A matriz está implementada em `server/infra.ts` (`PERMISSOES`) e é verificada em todas as rotas pelo middleware `exigir(...)`. A interface apenas esconde botões; a proteção real é no servidor.
 
 ---
 
-## 5. Projeto detalhado (IEEE 1016 — *design views*)
+## 5. Projeto detalhado (IEEE 1016 — design views)
 
 ### 5.1 Catálogo da API REST
 
@@ -319,19 +319,19 @@ Todas as rotas exigem sessão, exceto `/api/auth/login` e `/api/saude`. Erros re
 
 ### 5.2 Algoritmos principais
 
-**Data limite de etapa (RF22, RN19):** `data_limite = data_referência + dias`. Se o parâmetro `prazos_antecipar_fim_de_semana` estiver ativo e a data cair no sábado/domingo, antecipa para a sexta-feira (observação da planilha de prazos). O dia da semana (RF27) é calculado com a mesma convenção do `WEEKDAY()` do Excel.
+Data limite de etapa (RF22, RN19): `data_limite = data_referência + dias`. Se o parâmetro `prazos_antecipar_fim_de_semana` estiver ativo e a data cair no sábado/domingo, antecipa para a sexta-feira (observação da planilha de prazos). O dia da semana (RF27) é calculado com a mesma convenção do `WEEKDAY()` do Excel.
 
-**Situação da tarefa (RF26, RN20):** `CONCLUIDA` se marcada; `ATRASADA` se `data_limite < hoje`; `VENCE_EM_BREVE` se faltam até `alerta_dias`; senão `NO_PRAZO`. "Hoje" é calculado no fuso America/Sao_Paulo.
+Situação da tarefa (RF26, RN20): `CONCLUIDA` se marcada; `ATRASADA` se `data_limite < hoje`; `VENCE_EM_BREVE` se faltam até `alerta_dias`; senão `NO_PRAZO`. "Hoje" é calculado no fuso America/Sao_Paulo.
 
-**Períodos aquisitivos (RF32, RN22):** a partir da admissão, períodos de 12 meses (`EDATE`), gerados até a data atual.
+Períodos aquisitivos (RF32, RN22): a partir da admissão, períodos de 12 meses (`EDATE`), gerados até a data atual.
 
-**Data limite de início das férias (RF33):** fórmula da planilha original: `EDATE(início, 12) + 335` dias (parâmetro `ferias_dias_limite_apos_aquisitivo`).
+Data limite de início das férias (RF33): fórmula da planilha original: `EDATE(início, 12) + 335` dias (parâmetro `ferias_dias_limite_apos_aquisitivo`).
 
-**Validação de férias (RF34, RF35, RN24–RN29):** pessoa ativa; período aquisitivo concluído; início após o período aquisitivo; sem sobreposição com outras férias; dias de direito conforme faltas (CLT art. 130); até 3 frações, nenhuma menor que 5 dias e uma com pelo menos 14 (CLT art. 134 §1º); início fora de sexta/sábado (art. 134 §3º, parametrizável). Início após a data limite gera **aviso** de férias em dobro (art. 137).
+Validação de férias (RF34, RF35, RN24–RN29): pessoa ativa; período aquisitivo concluído; início após o período aquisitivo; sem sobreposição com outras férias; dias de direito conforme faltas (CLT art. 130); até 3 frações, nenhuma menor que 5 dias e uma com pelo menos 14 (CLT art. 134 §1º); início fora de sexta/sábado (art. 134 §3º, parametrizável). Início após a data limite gera aviso de férias em dobro (art. 137).
 
-**Progresso do checklist (RF21):** `(feitos + não se aplica) / total`.
+Progresso do checklist (RF21): `(feitos + não se aplica) / total`.
 
-**Pendências obrigatórias (RN37, RNF12):** itens `obrigatório` com status `NAO_FEITO`; no desligamento, também modalidade não definida, motivo não confirmado e equipamentos não devolvidos; na admissão, termo de equipamentos não assinado.
+Pendências obrigatórias (RN37, RNF12): itens `obrigatório` com status `NAO_FEITO`; no desligamento, também modalidade não definida, motivo não confirmado e equipamentos não devolvidos; na admissão, termo de equipamentos não assinado.
 
 ### 5.3 Tratamento de concorrência e consistência (RNF15)
 Operações que alteram processos rodam em transação com `SELECT … FOR UPDATE` na linha principal, evitando, por exemplo, duas férias conflitantes registradas ao mesmo tempo. Após qualquer alteração a interface recarrega o processo, de modo que percentuais, prazos e pendências ficam sempre consistentes.
@@ -356,9 +356,9 @@ Operações que alteram processos rodam em transação com `SELECT … FOR UPDAT
 ---
 
 ## 7. Padrões de construção (SWEBOK cap. 4)
-- **Linguagem:** TypeScript em modo `strict` no servidor e no cliente (`npm run typecheck`).
-- **Validação:** toda entrada externa passa por um esquema Zod antes de chegar ao banco.
-- **SQL:** sempre parametrizado; nenhuma concatenação de valores do usuário.
-- **Nomes:** em português, iguais aos termos do DRS (glossário compartilhado).
-- **Rastreabilidade no código:** comentários citam o identificador do requisito/regra (ex.: `// RN37`), permitindo localizar a implementação com uma busca.
-- **Gerência de configuração (SWEBOK cap. 8 / IEEE 828):** repositório Git, branch `main` protegida, uma branch por funcionalidade, *pull request* revisado por outro integrante, deploy automático da Vercel a cada push na `main` e *preview* por PR.
+- Linguagem: TypeScript em modo `strict` no servidor e no cliente (`npm run typecheck`).
+- Validação: toda entrada externa passa por um esquema Zod antes de chegar ao banco.
+- SQL: sempre parametrizado; nenhuma concatenação de valores do usuário.
+- Nomes: em português, iguais aos termos do DRS (glossário compartilhado).
+- Rastreabilidade no código: comentários citam o identificador do requisito/regra (ex.: `// RN37`), permitindo localizar a implementação com uma busca. As mensagens exibidas ao usuário não mostram esses códigos.
+- Gerência de configuração (SWEBOK cap. 8 / IEEE 828): repositório Git, branch `main` protegida, uma branch por funcionalidade, pull request revisado por outro integrante, deploy automático da Vercel a cada push na `main` e preview por PR.

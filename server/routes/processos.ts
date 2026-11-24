@@ -39,7 +39,7 @@ r.post('/admissoes', exigir('processo:escrever'), async (req, res) => {
   const p = await parametros();
   const ad = await tx(async (db) => {
     const c = await one('SELECT * FROM colaboradores WHERE id=$1 FOR UPDATE', [d.colaborador_id], db);
-    if (!c) throw new HttpError(422, 'RN08: a admissão deve estar associada a uma pessoa colaboradora cadastrada.');
+    if (!c) throw new HttpError(422, 'A admissão deve estar associada a uma pessoa colaboradora cadastrada.');
     if (c.status === 'DESLIGADO') throw new HttpError(422, 'Pessoa desligada: atualize o cadastro antes de readmitir.');
     const modelo = d.modelo_prazo_id
       ?? (await one('SELECT id FROM modelos_prazo ORDER BY padrao DESC, id LIMIT 1', [], db))?.id ?? null;
@@ -440,7 +440,7 @@ r.post('/desligamentos', exigir('processo:escrever'), async (req, res) => {
   const p = await parametros();
   const out = await tx(async (db) => {
     const c = await one('SELECT * FROM colaboradores WHERE id=$1 FOR UPDATE', [d.colaborador_id], db);
-    if (!c) throw new HttpError(422, 'RN30: o desligamento deve estar associado a uma pessoa colaboradora existente.');
+    if (!c) throw new HttpError(422, 'O desligamento deve estar associado a uma pessoa colaboradora existente.');
     if (c.status === 'DESLIGADO') throw new HttpError(422, 'Esta pessoa já está desligada.');
     if (d.data_desligamento < c.data_admissao) throw new HttpError(422, 'A data de desligamento não pode ser anterior à admissão.');
     const novo = await one(
@@ -521,7 +521,7 @@ r.post('/desligamentos/:id/concluir', exigir('processo:escrever'), async (req, r
     if (!d) throw naoEncontrado('Desligamento');
     if (d.status !== 'ABERTO') throw new HttpError(422, 'Processo já encerrado.');
     const pend = await pendenciasDesligamento(db, id);
-    if (pend.lista.length) throw new HttpError(422, 'RN37: o desligamento possui pendências obrigatórias.', pend.lista);
+    if (pend.lista.length) throw new HttpError(422, 'O desligamento possui pendências obrigatórias.', pend.lista);
     await query("UPDATE desligamentos SET status='CONCLUIDO', concluido_em=now() WHERE id=$1", [id], db);
     // RF47 / RN38: atualiza o status do colaborador para desligado
     await query("UPDATE colaboradores SET status='DESLIGADO', data_demissao=$2, atualizado_em=now() WHERE id=$1", [d.colaborador_id, d.data_desligamento], db);

@@ -1,16 +1,16 @@
 # Matriz de Rastreabilidade
 
 Requisito ↔ funcionalidade da planilha original ↔ componente do sistema ↔ teste.
-Conforme ISO/IEC/IEEE 29148 (§5.2.8 rastreabilidade bidirecional) e SWEBOK v4 cap. 1 (*Requirements Traceability*).
+Conforme ISO/IEC/IEEE 29148 (§5.2.8 rastreabilidade bidirecional) e SWEBOK v4 cap. 1 (Requirements Traceability).
 
-**Planilhas de origem:**
-- **CAD**: Cadastro de Pessoas Colaboradoras (abas 1-Dados pessoais, 2-Dados profissionais, 3-Consulta rápida, 4-Painel de controle)
-- **FER**: Controle de Férias de Funcionários (abas 2-Controle de férias, 3-Mapa de férias)
-- **CHK**: Checklist de Admissão e Desligamento (abas Checklist de admissão, Modelo para LGPD, Checklist de desligamento, Documentos da rescisão e dicas, Passo a passo FGTS Digital)
-- **PRZ**: Gerenciamento de Prazos na Admissão (abas Calculadora, Calculadora Tech, Modelo - copiar esta aba, abas mensais)
-- **NOVO**: requisito sem equivalente nas planilhas (levantado pelo grupo)
+Planilhas de origem:
+- CAD: Cadastro de Pessoas Colaboradoras (abas 1-Dados pessoais, 2-Dados profissionais, 3-Consulta rápida, 4-Painel de controle)
+- FER: Controle de Férias de Funcionários (abas 2-Controle de férias, 3-Mapa de férias)
+- CHK: Checklist de Admissão e Desligamento (abas Checklist de admissão, Modelo para LGPD, Checklist de desligamento, Documentos da rescisão e dicas, Passo a passo FGTS Digital)
+- PRZ: Gerenciamento de Prazos na Admissão (abas Calculadora, Calculadora Tech, Modelo - copiar esta aba, abas mensais)
+- NOVO: requisito sem equivalente nas planilhas (levantado pelo grupo)
 
-**Componentes:** API = `server/routes/…`; DOM = `server/domain/…`; BD = `server/schema.sql`; UI = `src/views/…`
+Componentes: API = `server/routes/…`; DOM = `server/domain/…`; BD = `server/schema.sql`; UI = `src/views/…`
 
 ## 1. Requisitos funcionais
 

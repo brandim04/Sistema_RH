@@ -312,8 +312,8 @@ r.get('/fgts-digital', async (_req, res) => {
     ],
     dicas: [
       'Solicite o extrato do FGTS para fins rescisórios cerca de 15 dias antes do fim do aviso prévio, para corrigir competências faltantes a tempo.',
-      'Confirme o real motivo do desligamento antes do fim do aviso prévio — a modalidade pode mudar (RN32).',
-      'Consulte a convenção coletiva: algumas preveem estabilidade (pré-aposentadoria, retorno de férias) (RN35).',
+      'Confirme o real motivo do desligamento antes do fim do aviso prévio — a modalidade pode mudar.',
+      'Consulte a convenção coletiva: algumas preveem estabilidade (pré-aposentadoria, retorno de férias).',
       'Oriente a pessoa a solicitar o seguro-desemprego pela CTPS Digital e o saque do FGTS pelo aplicativo do FGTS.',
     ],
   });

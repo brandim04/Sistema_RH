@@ -14,7 +14,7 @@ const ENTIDADES = ['colaborador', 'admissao', 'desligamento', 'item', 'tarefa', 
 
 <template>
   <div>
-    <div class="topo"><div><h1>Auditoria</h1><p>Quem fez cada alteração e quando (RF49, RF50, RNF05).</p></div></div>
+    <div class="topo"><div><h1>Auditoria</h1><p>Quem fez cada alteração e quando.</p></div></div>
     <div class="cartao">
       <div class="filtros">
         <div class="campo"><label>Entidade</label><select v-model="entidade"><option value="">Todas</option><option v-for="e in ENTIDADES" :key="e" :value="e">{{ e }}</option></select></div>

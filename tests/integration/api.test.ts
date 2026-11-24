@@ -57,7 +57,7 @@ describe('Cadastro (RF01-RF10, RN01-RN06)', () => {
   it('CT-I05 RN02 impede CPF duplicado', async () => {
     const r = await admin.post('/api/colaboradores').send(pessoa(0, { nome: 'Outra Pessoa' }));
     expect(r.status).toBe(409);
-    expect(r.body.erro).toMatch(/RN02/);
+    expect(r.body.erro).toMatch(/já existe uma pessoa colaboradora cadastrada com este CPF/i);
   });
   it('CT-I06 RNF11 rejeita CPF inválido, nível e estado civil fora do padrão', async () => {
     expect((await admin.post('/api/colaboradores').send(pessoa(1, { cpf: '123.321.123-31' }))).status).toBe(400);
@@ -104,7 +104,7 @@ describe('Admissão e prazos (RF11-RF29)', () => {
   it('CT-I12 RN08 admissão exige pessoa cadastrada', async () => {
     const r = await admin.post('/api/admissoes').send({ colaborador_id: 99999, data_referencia: '2025-07-01' });
     expect(r.status).toBe(422);
-    expect(r.body.erro).toMatch(/RN08/);
+    expect(r.body.erro).toMatch(/admissão deve estar associada a uma pessoa colaboradora/i);
   });
   it('CT-I13 RF12/RF22 gera checklist agrupado e tarefas com prazos calculados', async () => {
     const c = await admin.post('/api/colaboradores').send(pessoa(2, { data_admissao: '2025-07-01', status: 'EM_ADMISSAO' })).expect(201);
@@ -147,7 +147,7 @@ describe('Admissão e prazos (RF11-RF29)', () => {
   it('CT-I17 RF19/RF20 equipamento exige termo assinado para concluir', async () => {
     await admin.post('/api/equipamentos').send({ colaborador_id: colab, admissao_id: adm.id, descricao: 'Notebook', patrimonio: 'NB-001', data_entrega: '2025-07-15' }).expect(201);
     const pend = (await admin.get(`/api/admissoes/${adm.id}`)).body.pendencias;
-    expect(pend.join()).toMatch(/RF20/);
+    expect(pend.join()).toMatch(/termo de entrega de equipamentos não assinado/i);
   });
   it('CT-I18 RNF12 não conclui com pendências; conclui após resolvê-las e ativa a pessoa', async () => {
     const r = await admin.post(`/api/admissoes/${adm.id}/concluir`);
@@ -208,7 +208,7 @@ describe('Férias (RF30-RF39)', () => {
     const p2 = periodos.find((p: any) => p.numero === 2);
     const conflito = await admin.post('/api/ferias').send({ colaborador_id: colab, periodo_aquisitivo_id: p2.id, inicio: '2025-07-21', fim: '2025-07-30' });
     expect(conflito.status).toBe(422);
-    expect(conflito.body.detalhes.join()).toMatch(/RN26/);
+    expect(conflito.body.detalhes.join()).toMatch(/conflito com férias já registradas/i);
     const excesso = await admin.post('/api/ferias').send({ colaborador_id: colab, periodo_aquisitivo_id: p2.id, inicio: '2025-09-01', fim: '2025-09-15' });
     expect(excesso.body.detalhes.join()).toMatch(/30 dias de direito/);
   });
@@ -216,7 +216,7 @@ describe('Férias (RF30-RF39)', () => {
     const p3 = periodos.find((p: any) => p.numero === 3);
     const r = await admin.post('/api/ferias').send({ colaborador_id: colab, periodo_aquisitivo_id: p3.id, inicio: '2026-01-05', fim: '2026-01-19' });
     expect(r.status).toBe(422);
-    expect(r.body.detalhes.join()).toMatch(/RN24/);
+    expect(r.body.detalhes.join()).toMatch(/só se completa em/i);
   });
   it('CT-I26 RF39 cancelamento mantém histórico e libera o saldo', async () => {
     const lista = (await admin.get(`/api/ferias?colaborador_id=${colab}`)).body;
@@ -244,9 +244,9 @@ describe('Desligamento (RF40-RF47)', () => {
     const r = await admin.post('/api/desligamentos').send({ colaborador_id: colab, data_desligamento: '2025-06-30' }).expect(201);
     deslig = (await admin.get(`/api/desligamentos/${r.body.id}`)).body;
     expect(deslig.itens.some((i: any) => i.categoria === 'Devolução de bens')).toBe(true);
-    expect(deslig.pendencias.join()).toMatch(/RN31/);
-    expect(deslig.pendencias.join()).toMatch(/RN32/);
-    expect(deslig.pendencias.join()).toMatch(/RN39: equipamento não devolvido: Celular/);
+    expect(deslig.pendencias.join()).toMatch(/selecione a modalidade de rescisão/i);
+    expect(deslig.pendencias.join()).toMatch(/confirme o motivo do desligamento/i);
+    expect(deslig.pendencias.join()).toMatch(/equipamento não devolvido: Celular/i);
   });
   it('CT-I29 RF42/RN31 modalidade define documentos; trocar modalidade substitui os itens', async () => {
     const mods = (await admin.get('/api/modalidades')).body;
@@ -268,13 +268,13 @@ describe('Desligamento (RF40-RF47)', () => {
   it('CT-I30 RNF12/RN37 bloqueia conclusão com pendências', async () => {
     const r = await admin.post(`/api/desligamentos/${deslig.id}/concluir`);
     expect(r.status).toBe(422);
-    expect(r.body.erro).toMatch(/RN37/);
+    expect(r.body.erro).toMatch(/desligamento possui pendências obrigatórias/i);
   });
   it('CT-I31 RF44 devolução de bens confere com o inventário da admissão', async () => {
     const eq = deslig.equipamentos[0];
     await admin.patch(`/api/equipamentos/${eq.id}`).send({ status: 'DEVOLVIDO', data_devolucao: '2025-06-30' }).expect(200);
     const d = (await admin.get(`/api/desligamentos/${deslig.id}`)).body;
-    expect(d.pendencias.join()).not.toMatch(/RN39/);
+    expect(d.pendencias.join()).not.toMatch(/equipamento não devolvido/i);
   });
   it('CT-I32 RF43 registra valores de verbas para conferência', async () => {
     const saldo = deslig.itens.find((i: any) => i.descricao === 'Saldo de salário');
@@ -294,7 +294,7 @@ describe('Desligamento (RF40-RF47)', () => {
     const det = (await admin.get(`/api/ferias/colaboradores/${colab}`)).body;
     const p = det.periodos.find((x: any) => x.numero === 2);
     const f = await admin.post('/api/ferias').send({ colaborador_id: colab, periodo_aquisitivo_id: p.id, inicio: '2025-07-07', fim: '2025-07-21' });
-    expect(f.body.detalhes.join()).toMatch(/RN29/);
+    expect(f.body.detalhes.join()).toMatch(/somente pessoas colaboradoras ativas/i);
   });
 });
 

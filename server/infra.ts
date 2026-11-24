@@ -45,7 +45,7 @@ export function errorHandler(err: any, _req: Request, res: Response, _next: Next
 
 function mensagemUnica(c?: string) {
   const m: Record<string, string> = {
-    colaboradores_cpf_hash_key: 'RN02: já existe uma pessoa colaboradora cadastrada com este CPF.',
+    colaboradores_cpf_hash_key: 'Já existe uma pessoa colaboradora cadastrada com este CPF.',
     colaboradores_matricula_key: 'Já existe uma pessoa colaboradora com esta matrícula.',
     ux_admissao_aberta: 'Já existe um processo de admissão aberto para esta pessoa.',
     ux_desligamento_aberto: 'Já existe um processo de desligamento aberto para esta pessoa.',
@@ -57,10 +57,10 @@ function mensagemUnica(c?: string) {
 }
 function mensagemCheck(c?: string) {
   const m: Record<string, string> = {
-    ck_demissao_somente_desligado: 'RN03: a data de demissão deve ficar em branco enquanto a pessoa não estiver desligada.',
+    ck_demissao_somente_desligado: 'A data de demissão deve ficar em branco enquanto a pessoa não estiver desligada.',
     ck_demissao_apos_admissao: 'A data de demissão não pode ser anterior à admissão.',
-    ck_na_somente_condicional: 'RN10: apenas itens condicionais podem ser marcados como "Não se aplica".',
-    ck_ferias_datas: 'RN25: a data de início não pode ser posterior à data de término.',
+    ck_na_somente_condicional: 'Apenas itens condicionais podem ser marcados como "Não se aplica".',
+    ck_ferias_datas: 'A data de início não pode ser posterior à data de término.',
     ck_devolucao: 'Informe a data de devolução.',
   };
   return m[c ?? ''] ?? 'Valor não permitido (regra de integridade).';

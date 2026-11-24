@@ -23,7 +23,7 @@ async function atualizar(campos: Record<string, unknown>, msg = 'Salvo.') {
 async function trocarModalidade(ev: Event) {
   const v = (ev.target as HTMLSelectElement).value;
   const id = v ? Number(v) : null;
-  if (d.value.modalidade_id && !(await confirmar('Trocar a modalidade de rescisão?', 'Os documentos da modalidade anterior serão substituídos e o motivo precisará ser reconfirmado (RN31/RN32).', 'Trocar'))) {
+  if (d.value.modalidade_id && !(await confirmar('Trocar a modalidade de rescisão?', 'Os documentos da modalidade anterior serão substituídos e o motivo precisará ser reconfirmado.', 'Trocar'))) {
     (ev.target as HTMLSelectElement).value = d.value.modalidade_id ?? '';
     return;
   }
@@ -85,16 +85,16 @@ function exportar() {
     <div class="grade g2">
       <section class="cartao">
         <h2>Modalidade e confirmações</h2>
-        <div class="campo"><label>Modalidade de rescisão (RF42)</label>
+        <div class="campo"><label>Modalidade de rescisão</label>
           <select :value="d.modalidade_id ?? ''" :disabled="!podeEditar" @change="trocarModalidade"><option value="">Selecione…</option><option v-for="m in modalidades" :key="m.id" :value="m.id">{{ m.nome }}</option></select>
         </div>
         <div v-if="modalidade?.observacao" class="aviso azul">{{ modalidade.observacao }}</div>
         <div class="form-grade">
           <div class="campo"><label>Aviso prévio</label><select :value="d.aviso_previo" :disabled="!podeEditar" @change="atualizar({ aviso_previo: ($event.target as HTMLSelectElement).value })"><option v-for="(v, k) in ROTULOS.aviso" :key="k" :value="k">{{ v }}</option></select></div>
         </div>
-        <label class="inline"><input type="checkbox" :checked="d.motivo_confirmado" :disabled="!podeEditar || !d.modalidade_id" @change="atualizar({ motivo_confirmado: ($event.target as HTMLInputElement).checked })" /> Motivo do desligamento confirmado com a empresa (RN32)</label>
-        <label class="inline"><input type="checkbox" :checked="d.convencao_consultada" :disabled="!podeEditar" @change="atualizar({ convencao_consultada: ($event.target as HTMLInputElement).checked })" /> Convenção coletiva consultada (estabilidades) (RN35)</label>
-        <label class="inline"><input type="checkbox" :checked="d.homologacao_sindicato" :disabled="!podeEditar" @change="atualizar({ homologacao_sindicato: ($event.target as HTMLInputElement).checked })" /> Rescisão será homologada no sindicato (RN34)</label>
+        <label class="inline"><input type="checkbox" :checked="d.motivo_confirmado" :disabled="!podeEditar || !d.modalidade_id" @change="atualizar({ motivo_confirmado: ($event.target as HTMLInputElement).checked })" /> Motivo do desligamento confirmado com a empresa</label>
+        <label class="inline"><input type="checkbox" :checked="d.convencao_consultada" :disabled="!podeEditar" @change="atualizar({ convencao_consultada: ($event.target as HTMLInputElement).checked })" /> Convenção coletiva consultada (estabilidades)</label>
+        <label class="inline"><input type="checkbox" :checked="d.homologacao_sindicato" :disabled="!podeEditar" @change="atualizar({ homologacao_sindicato: ($event.target as HTMLInputElement).checked })" /> Rescisão será homologada no sindicato</label>
       </section>
 
       <section class="cartao">
@@ -103,7 +103,7 @@ function exportar() {
         <div class="mudo pequeno">{{ d.progresso.feitos }} feitos · {{ d.progresso.na }} não se aplicam · {{ d.progresso.pendentes }} pendentes</div>
         <div class="pequeno" style="margin-top:8px">Verbas conferidas (soma dos valores informados): <strong class="num">{{ moeda(d.total_verbas) }}</strong></div>
         <div v-if="aberto && d.pendencias.length" class="aviso ambar" style="margin:12px 0 0">
-          <strong>{{ d.pendencias.length }} pendência(s) impedem a conclusão (RN37):</strong>
+          <strong>{{ d.pendencias.length }} pendência(s) impedem a conclusão:</strong>
           <ul><li v-for="p in d.pendencias.slice(0, 7)" :key="p">{{ p }}</li><li v-if="d.pendencias.length > 7">… e mais {{ d.pendencias.length - 7 }}</li></ul>
         </div>
         <div v-else-if="aberto" class="aviso verde" style="margin:12px 0 0">Sem pendências obrigatórias. O desligamento pode ser concluído.</div>
@@ -123,7 +123,7 @@ function exportar() {
     </section>
 
     <section v-if="aba === 'bens'" class="cartao">
-      <p class="mudo" style="margin-top:0">Conferência com o inventário registrado na admissão (RF44, RN39).</p>
+      <p class="mudo" style="margin-top:0">Conferência com o inventário registrado na admissão.</p>
       <table>
         <thead><tr><th>Equipamento</th><th>Patrimônio</th><th>Entregue em</th><th>Situação</th><th></th></tr></thead>
         <tbody>
@@ -150,7 +150,7 @@ function exportar() {
           <div><dt>Admissão</dt><dd>{{ data(d.data_admissao) }}</dd></div>
           <div><dt>Data do desligamento</dt><dd>{{ data(d.data_desligamento) }}</dd></div>
           <div><dt>Observações</dt><dd style="white-space:pre-line">{{ d.observacoes ?? '—' }}</dd></div>
-          <div style="grid-column:1/-1"><dt>Orientações pós-desligamento (benefícios, plano de saúde) — RN36</dt><dd style="white-space:pre-line">{{ d.orientacoes_pos ?? '—' }}</dd></div>
+          <div style="grid-column:1/-1"><dt>Orientações pós-desligamento (benefícios, plano de saúde)</dt><dd style="white-space:pre-line">{{ d.orientacoes_pos ?? '—' }}</dd></div>
         </dl>
         <button v-if="podeEditar" style="margin-top:12px" @click="edicao = { data_desligamento: d.data_desligamento, observacoes: d.observacoes ?? '', orientacoes_pos: d.orientacoes_pos ?? '' }">Editar</button>
       </template>

@@ -120,7 +120,7 @@ async function validarNoBanco(db: Db, d: z.infer<typeof schemaFerias>, ignorarId
   const c = await one('SELECT * FROM colaboradores WHERE id=$1 FOR UPDATE', [d.colaborador_id], db);
   if (!c) throw naoEncontrado('Pessoa colaboradora');
   const pa = await one('SELECT * FROM periodos_aquisitivos WHERE id=$1 AND colaborador_id=$2', [d.periodo_aquisitivo_id, c.id], db);
-  if (!pa) throw new HttpError(422, 'RN23: período aquisitivo não pertence a esta pessoa colaboradora.');
+  if (!pa) throw new HttpError(422, 'Período aquisitivo não pertence a esta pessoa colaboradora.');
   const existentes = await query("SELECT * FROM ferias WHERE colaborador_id=$1 AND status='PROGRAMADA'", [c.id], db);
   const v = validarFerias({
     colaboradorStatus: c.status, periodo: pa, existentes, novo: d, hoje: hoje(),
